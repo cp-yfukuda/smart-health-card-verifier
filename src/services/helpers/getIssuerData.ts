@@ -38,8 +38,8 @@ export const getIssuerData = async ( issuer: string ):  Promise<any> => {
 export const _getIssuerData = async (issuer: string): Promise<IssuerItemType|null> => {
   const _issuerMap = (issuersMap??{})
   let issuerItem = _issuerMap[issuer]
-
-  if ( issuerItem.canonical_iss ) {
+  console.log( "#YF issuer Item for " + issuer + " \r\n" + JSON.stringify( issuerItem ))
+  if ( issuerItem && issuerItem.canonical_iss ) {
     console.debug('using canonical_iss')
     issuerItem = _issuerMap[issuerItem.canonical_iss] || issuerItem
   }

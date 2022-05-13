@@ -73,6 +73,7 @@ export async function validate (jws: string): Promise<any> {
     console.log('NO PAYLOAD!!')
     return
   }
+  console.info("#YF ------------0")
 
   try { 
     await extractKeyURL(payload)
@@ -80,20 +81,21 @@ export async function validate (jws: string): Promise<any> {
     if (err instanceof InvalidError) throw err
     return 
   }
-
+  console.info("#YF ------------1")
   const result = false
   if (!headerJson) {
     return result
   }
+  console.info("#YF ------------2")
 
   const isValid = await verifyJws(jws, headerJson.kid)
-
   let document = await getRecord( payload )
 
   document = {
     isValid,
     ...document
   }
+  console.info("#YF ------------3")
 
   return document
 }
@@ -320,7 +322,7 @@ async function extractKeyURL (payload: any) {
       var iss= payload.iss
       if( !remoteConfig.useLegacy() ) {
          //switch to canonical_iss if there is 
-         const issuerItem = await getIssuerData( payload.iss )
+         const issuerItem = await getIssuerData( payload.iss ) ?? payload.iss
          if( issuerItem ){
            iss = issuerItem.iss
          }

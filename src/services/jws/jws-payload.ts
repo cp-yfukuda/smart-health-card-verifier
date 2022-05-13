@@ -15,6 +15,7 @@ export function validate (jwsPayloadText: string): Boolean {
 
   const jwsPayload = utils.parseJson<JWSPayload>(jwsPayloadText)
   const isJwsPayloadValid = checkJwsPayload(jwsPayload)
+
   if (!isJwsPayloadValid) return false
  
   const fhirBundleJson = jwsPayload?.vc.credentialSubject.fhirBundle

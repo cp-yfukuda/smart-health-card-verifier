@@ -12,7 +12,6 @@ export const validate = async (qr: string[]): Promise<any> => {
     console.log('ERROR: JWS was not extracted')
     return undefined
   }
-
   return await jws.validate(jwsString)
 }
 

@@ -19,8 +19,9 @@ export async function getRecord (payload: JWSPayload): Promise<any>{
 
   const issuerData = await getIssuerData(issuer) || notFoundIssuer
   const { message } = issuerData
-  const isIssuerNotFound = message && message === 'Issuer not found'
+  const isIssuerNotFound = ( message && message === 'Issuer not found' )
   if (isIssuerNotFound) {
+    console.info("#YF issuer not found ")
     issuerData.url = issuer
     issuerData.name = undefined
   }
