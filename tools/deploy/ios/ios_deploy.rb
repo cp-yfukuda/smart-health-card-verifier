@@ -1,7 +1,25 @@
 require 'xcodeproj'
 require 'pathname'
 require "json"
+require "optparse"
 
+env = "dev"
+op = OptionParser.new do |op|
+  op.banner = 'Usage: ios_deploy [options]'
+  op.separator('Options:')
+  op.on('-e', '--env=ENV') do |_env|
+    puts("arg = #{_env}")
+    if ['prod','dev'].include?( _env )
+        env = _env
+    end
+  end
+  op.on '-h', 'Show this message.' do
+    puts(op)
+    exit
+  end
+end
+
+args = op.parse(ARGV)
 
 unless defined?( PROJECT_ROOT  )
     PROJECT_ROOT = "#{Pathname.new(__FILE__).realpath.dirname.dirname.dirname.dirname}"
@@ -51,7 +69,5 @@ def update_bundle( bundle_name , version, market_version )
     AppGeneration::PROJECT.save()
 end
 
-env = "prod"
-puts("version: #{BuildConfig::version()}")
-puts("version: #{BuildConfig::bundle_id(env)}")
+puts("Envrionemnt : #{env}") 
 update_bundle( bundle_id( env ), version(), version() )
