@@ -5,13 +5,9 @@ on:
     types: [published]
 
 jobs:
-  ios-build:
-    name: IOS Build
+  IOS Dev Release:
+    name: 'Build and Publish VerifierDev to TestFlight'
     runs-on: macOS-latest
-    defaults:
-      run:
-        working-directory: ios
-
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.9.1
@@ -38,7 +34,14 @@ jobs:
         with:
           ruby-version: 2.6
           bundler-cache: true
-
+      - name: Decrypt Required Files
+        working-directory: ./ios
+        run: |
+          echo "${{ secrets.IOS_DEPLOY_API_KEY_SECRET }}" > api_secret.p8
+          echo "${{ secrets.DEV_IOS_MOBILE_PROVISION }}" > Distribution.mobileprovision.asc
+          gpg --decrypt --passphrase "${{ secrets.DEV_GPG_PASSPHRASE }}" --batch Distribution.mobileprovision.asc > Distribution.mobileprovision
+          echo "${{ secrets.DEV_IOS_P12_CERTIFICATE }}" > DistributionCertificates.p12.asc
+          gpg --decrypt --passphrase "${{ secrets.DEV_GPG_PASSPHRASE }}" --batch DistributionCertificates.p12.asc > DistributionCertificates.p2
       - name: Restore Pods cache
         uses: actions/cache@v2
         with:
