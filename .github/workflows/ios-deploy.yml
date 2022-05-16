@@ -7,7 +7,10 @@ on:
 jobs:
   IOS Dev Release:
     name: 'Build and Publish VerifierDev to TestFlight'
-    runs-on: macOS-latest
+    runs-on: macos-11
+    env:
+      CODE_SIGN_CERTIFICATE_BASE64: ${{ secret.DEV_IOS_CERTIFICATE_BASE64 }}
+      PASSPHRASE: ${{ secret.DEV_IOS_PASSPHRASE }}
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.9.1
@@ -34,6 +37,8 @@ jobs:
         with:
           ruby-version: 2.6
           bundler-cache: true
+        run: |
+          ruby ./tools/deploy/ios/ios_deploy.rb -e dev
       - name: Decrypt Required Files
         working-directory: ./ios
         run: |
@@ -57,26 +62,28 @@ jobs:
         run: pod install
 
       - name: Build IOS App
-        uses: yukiarrr/ios-build-action@v1.4.0
+        working-directory: ./ios
+        uses: mxcl/xcodebuild@v1
         with:
-          project-path: ios/Gakko.xcodeproj
-          p12-base64: ${{ secrets.IOS_P12_BASE64 }}
-          mobileprovision-base64: ${{ secrets.IOS_MOBILE_PROVISION_BASE64 }}
-          code-signing-identity: "iPhone Distribution"
-          team-id: ${{ secrets.IOS_TEAM_ID }}
-          certificate-password: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
-          workspace-path: ios/Gakko.xcworkspace
+          code-sign-certificate: ${CODE_SIGN_CERTIFICATE_BASE64}
+          code-sign-certificate-passphrase: ${PASSPHRASE}
+          platform: iOS
+          xcode: ^11.3
+          configuration: release # no default, ie. `xcodebuild` decides itself
+          scheme: Verfier
+          action: build
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: Gakko IOS IPA
-          path: "output.ipa"
 
-      - name: "Upload app to TestFlight"
-        uses: apple-actions/upload-testflight-build@v1
-        with:
-          app-path: "output.ipa"
-          issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
-          api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
-          api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+      # - name: Upload Artifact
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: Gakko IOS IPA
+      #     path: "output.ipa"
+
+      # - name: "Upload app to TestFlight"
+      #   uses: apple-actions/upload-testflight-build@v1
+      #   with:
+      #     app-path: "output.ipa"
+      #     issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+      #     api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
+      #     api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}

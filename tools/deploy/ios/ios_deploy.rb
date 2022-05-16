@@ -37,6 +37,14 @@ module AppGeneration
     PATH = "#{IOS_PROJECT_ROOT}"
     XCODE_PROJ_PATH = "#{PATH}/Verifier.xcodeproj"
     PROJECT = Xcodeproj::Project.open XCODE_PROJ_PATH
+
+    def install_key_chain
+      home = ENV["HOME"]
+      exec "mkdir -p #{home}/Library/MobileDevice/Provisioning\\ Profiles" if !File.directory?(File.expand_path "#{home}/Library/MobileDevice/Provisioning Profiles")
+      exec "cp #{IOSClient::AppGeneration::APP_PATH}/#{seed_source}.mobileprovision #{home}/Library/MobileDevice/Provisioning\\ Profiles/build-#{build_id}.mobileprovision"
+      exec "rm -f #{IOSClient::AppGeneration::APP_PATH}/*.mobileprovision"
+    end
+
 end
 
 module BuildConfig
@@ -50,6 +58,8 @@ module BuildConfig
         return "#{CONFIG["packageName"]}#{env=="dev" ? ".dev" : ""}"
     end
 end
+
+
 
 
 include BuildConfig

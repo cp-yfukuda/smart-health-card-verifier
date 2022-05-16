@@ -610,7 +610,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.thecommonsproject.smarthealthcardverifier;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thecommonsproject.smarthealthcardverifier.dev;
 				PRODUCT_NAME = Verifier;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -642,7 +642,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.thecommonsproject.smarthealthcardverifier;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thecommonsproject.smarthealthcardverifier.dev;
 				PRODUCT_NAME = Verifier;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
