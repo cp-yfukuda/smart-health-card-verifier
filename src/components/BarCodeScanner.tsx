@@ -13,7 +13,7 @@ export interface BarcodeProps {
 }
 
 const BarCodeScanner = ({ onBarCodeScanned, type, styles }: BarcodeProps) => {
-  return <View style={ styles }>
+  return <View style={styles}>
     <QRCodeScanner
       reactivate={ true }
       showMarker={ false }
