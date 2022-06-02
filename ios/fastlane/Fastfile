@@ -30,11 +30,11 @@ platform :ios do
         use_automatic_signing: false,
         team_id: ENV['TEAM_ID'],
         profile_uuid: ENV['PROFILE_UUID'],
-        code_sign_identity: "Apple Distribution: The Commons Project Foundation (KZJSZ95597)"
+        code_sign_identity: ENV['CODE_SIGN_IDENTITY']
     )
   end
 
-  lane :dev do
+  lane :release do |options|
 
     unlock_keychain(
       path: ENV['KEYCHAIN_PATH'],
@@ -43,7 +43,7 @@ platform :ios do
     )
 
     build_app(
-      scheme: "VerifierDevReleaseBuild",
+      scheme: ENV['XCODE_SCHEME'],
       output_directory: ENV['OUTPUT_PATH'],
       output_name: ENV['IPA_OUTPUT_NAME'],
       silent: false,
