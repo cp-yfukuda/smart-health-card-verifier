@@ -8,7 +8,7 @@ class TestVerifier implements IVerifierBase {
         this.options = options
     }
     
-    canVerify( payloads: string[] ): Promise< IVerifierBase|null > {
+    canSupport( payloads: string[] ): Promise< IVerifierBase|null > {
         if ( payloads[0] == "1" ) {
             return Promise.resolve( this as IVerifierBase )
         }

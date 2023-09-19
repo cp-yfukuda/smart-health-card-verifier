@@ -2,7 +2,7 @@
 
 export type VerifierInitOption = {[key: string]: any | undefined };
 
-export type IVerifierBaseCls = new ( options: VerifierInitOption ) => IVerifierBase
+export type IScannerBaseCls = new ( options: VerifierInitOption ) => IScannerBase
 
 export interface VaccineCodeItemType {
   'system': string
@@ -27,8 +27,8 @@ export interface BaseResponse extends BaseResources {
 }
 
 
-export interface  IVerifierBase {
-  canVerify: ( payloads: string[] ) => Promise<null|IVerifierBase>
+export interface  IScannerBase {
+  canSupport: ( payloads: string[] ) => Promise<null|IScannerBase>
   validate: (payloads: string[]) => Promise< null | BaseResponse >
 }
 

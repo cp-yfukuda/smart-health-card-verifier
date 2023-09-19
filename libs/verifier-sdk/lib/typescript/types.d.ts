@@ -22,7 +22,7 @@ export interface BaseResponse extends BaseResources {
     errorCode: number;
 }
 export interface IVerifierBase {
-    canVerify: (payloads: string[]) => Promise<null | IVerifierBase>;
+    canSupport: (payloads: string[]) => Promise<null | IVerifierBase>;
     validate: (payloads: string[]) => Promise<null | BaseResponse>;
 }
 export interface Result {

@@ -26,7 +26,7 @@ class SHCVerifier {
     (0, _Config.setVerifierInitOption)(options.shc);
     console.info("SHCVerifier: initialized");
   }
-  canVerify(payloads) {
+  canSupport(payloads) {
     if (payloads.length > 0 && payloads[0].length > 4 && payloads[0].startsWith("shc:/")) {
       return Promise.resolve(this);
     }

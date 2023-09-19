@@ -1,4 +1,4 @@
-import { VerifierFactory, IVerifierBase, VerifierInitOption } from 'verifier-sdk'
+import { ScannerFactory, IScannerBase, VerifierInitOption } from 'verifier-sdk'
 import { SHCVerifier } from 'shc-verifier-plugin'
 var promiseAny = require('promise.any');
 
@@ -12,14 +12,14 @@ export class ModuleService {
   }
 
   initialize( option: VerifierInitOption ): Promise<boolean> {
-    VerifierFactory.register( "shc", SHCVerifier, option );
+    ScannerFactory.register( "shc", SHCVerifier, option );
     return Promise.resolve( true )
   }
 
-  getVerifier(payloads: string[] ): Promise< null| IVerifierBase >{
-    const verifiers = VerifierFactory.getVerifiers();
+  getScanner(payloads: string[] ): Promise< null| IScannerBase >{
+    const verifiers = ScannerFactory.getScanners();
     const promises = Object.keys( verifiers ).map((key:string)=>
-      verifiers[key].canVerify( payloads )
+      verifiers[key].canSupport( payloads )
     );
     return promiseAny(promises)
   }

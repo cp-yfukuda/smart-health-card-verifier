@@ -14,7 +14,7 @@ export class SHCVerifier implements IVerifierBase {
     console.info("SHCVerifier: initialized")
   }
   
-  canVerify( payloads: string[] ): Promise< IVerifierBase|null > {
+  canSupport( payloads: string[] ): Promise< IVerifierBase|null > {
     if ( payloads.length > 0 &&
          payloads[0].length > 4 && 
          payloads[0].startsWith("shc:/")) {
