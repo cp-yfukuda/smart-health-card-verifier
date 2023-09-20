@@ -1,6 +1,6 @@
 import { sortRecordByDateField } from '../../../utils/utils'
 import { ResourceType, isResourceType } from '../fhirTypes'
-import type { RecordEntry, VaccineCodeItemType } from 'verifier-sdk'
+import type { RecordEntry, VaccineCodeItemType } from 'parser-sdk'
 import  { getVerifierInitOption, VerifierKey } from '../../../models/Config'
 import type { JWSPayload, ParserFunction } from '../types'
 

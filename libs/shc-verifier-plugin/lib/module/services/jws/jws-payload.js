@@ -1,4 +1,4 @@
-import { ErrorCode, Utils, InvalidError } from 'verifier-sdk';
+import { ErrorCode, Utils, InvalidError } from 'parser-sdk';
 import jwsPayloadSchema from '../../schemas/smart-health-card-vc-schema.json';
 import * as fhirBundle from '../fhir/fhirBundle';
 import { getRecordTypeFromPayload } from '../fhir/fhirTypes';
@@ -10,7 +10,9 @@ export async function validate(jwsPayloadText) {
   }
   const jwsPayload = Utils.parseJson(jwsPayloadText);
   const isJwsPayloadValid = checkJwsPayload(jwsPayload);
-  if (!isJwsPayloadValid) return Promise.reject(false);
+  if (!isJwsPayloadValid) {
+    return Promise.reject(false);
+  }
   const fhirBundleJson = jwsPayload === null || jwsPayload === void 0 ? void 0 : jwsPayload.vc.credentialSubject.fhirBundle;
   const recordType = getRecordTypeFromPayload(jwsPayload);
   return fhirBundle.validate(recordType, fhirBundleJson);

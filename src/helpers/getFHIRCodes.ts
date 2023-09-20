@@ -1,4 +1,4 @@
-import { ErrorCode, VaccineCodeItemType } from 'verifier-sdk'
+import { ErrorCode, VaccineCodeItemType } from 'parser-sdk'
 import { vaccineCodesURl, ApiTimeout } from '~/models/constants'
 import { getInstallationIdManually } from '~/utils/utils'
 import { DataKeys, loadDataOrRetrieveLocally, getDataService } from '~/services/data/DataService'

@@ -1,4 +1,4 @@
-import { ErrorCode } from 'verifier-sdk';
+import { ErrorCode } from 'parser-sdk';
 import Ajv from 'ajv';
 import fhirSchema from '../../schemas/fhir-schema.json';
 const schemaCache = {};

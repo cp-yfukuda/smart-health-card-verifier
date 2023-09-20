@@ -61,12 +61,12 @@
     "react-native-builder-bob": "^0.18.3",
     "release-it": "^15.5.0",
     "typescript": "^4.7.4",
-    "verifier-sdk": "file:../verifier-sdk"
+    "parser-sdk": "file:../parser-sdk"
   },
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "verifier-sdk": "file:../verifier-sdk"
+    "parser-sdk": "file:../parser-sdk"
   },
   "commitlint": {
     "extends": [

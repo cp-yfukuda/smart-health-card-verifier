@@ -1,4 +1,4 @@
-import { ErrorCode, Utils, InvalidError } from 'verifier-sdk'
+import { ErrorCode, Utils, InvalidError } from 'parser-sdk'
 import { validateSchema, objPathToSchema } from '../jws/schema'
 import fhirSchema from '../../schemas/fhir-schema.json'
 import { getPatientDataFromFhir } from './getPatiendDataFromFhir'
@@ -8,7 +8,7 @@ import { RecordType, getRecordTypeFromPayload } from './fhirTypes'
 import validateBundleForRecordType from './recordValidator'
 import { VerifierKey, getVerifierInitOption } from '../../models/Config'
 import type { JWSPayload, FhirBundle } from './types'
-import type { BaseResources } from 'verifier-sdk'
+import type { BaseResources } from 'parser-sdk'
 
 const getIssuerFromFHIR = (payload: any): string => {
   const { iss: issuer } = payload
@@ -79,17 +79,17 @@ export function getTagKeys( payload: JWSPayload ): string[] {
 
 export async function validate ( recordType: RecordType, fhirBundleJSON: object | undefined): Promise<boolean> {
   let isFhirBundleValid = false
-
   if ( typeof fhirBundleJSON !== 'undefined') {
     const fhirBundle = fhirBundleJSON as FhirBundle
 
     if ( fhirBundle ) {
       isFhirBundleValid = validateFhirBundle(fhirBundle)
     }
+
     if (!isFhirBundleValid) {
+      console.info("FHIR invalid")
       return Promise.reject(false)
     }
-
     // Validate each resource of .entry[]
     for (const [index, entry] of fhirBundle.entry.entries()) {
       validateFhirBundleEntry(entry, index)

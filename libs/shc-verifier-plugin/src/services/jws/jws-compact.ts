@@ -2,9 +2,9 @@
 import pako from 'pako'
 import jose from 'node-jose'
 
-import { InvalidError, Utils, Timer } from 'verifier-sdk'
+import { InvalidError, Utils, Timer } from 'parser-sdk'
 import type { JWSPayload } from '../fhir/types'
-import { ErrorCode } from 'verifier-sdk'
+import { ErrorCode } from 'parser-sdk'
 import { getVerifierInitOption, VerifierKey } from '../../models/Config'
 import { KeysStore } from './keys'
 import * as jwsPayload from './jws-payload'
@@ -51,8 +51,7 @@ export async function validate ( jws: string ): Promise<any> {
   key = checkJwsSignatureFormat(key)
   const { inflatedPayload, b64DecodedPayloadString } = checkJwsPayload(rawPayload)
 
-  jws = [header, rawPayload, key].join('.')
-
+  jws = [ header, rawPayload, key ].join('.')
   try {
     const isJwsPayloadValid = await jwsPayload.validate(
       inflatedPayload || b64DecodedPayloadString || rawPayload,
@@ -86,10 +85,9 @@ export async function validate ( jws: string ): Promise<any> {
 
   const isValid = await verifyJws(jws, headerJson.kid)
   let document = await getRecord( payload ) as any
-
   document['isValid'] = isValid
-
   return document
+
 }
 
 async function fetchWithTimeout (url: string, options: any, timeout: number, timeoutError: string) {

@@ -1,4 +1,4 @@
-import { ErrorCode, Utils, InvalidError } from 'verifier-sdk';
+import { ErrorCode, Utils, InvalidError } from 'parser-sdk';
 import { validateSchema, objPathToSchema } from '../jws/schema';
 import fhirSchema from '../../schemas/fhir-schema.json';
 import { getPatientDataFromFhir } from './getPatiendDataFromFhir';
@@ -82,9 +82,9 @@ export async function validate(recordType, fhirBundleJSON) {
       isFhirBundleValid = validateFhirBundle(fhirBundle);
     }
     if (!isFhirBundleValid) {
+      console.info("FHIR invalid");
       return Promise.reject(false);
     }
-
     // Validate each resource of .entry[]
     for (const [index, entry] of fhirBundle.entry.entries()) {
       validateFhirBundleEntry(entry, index);

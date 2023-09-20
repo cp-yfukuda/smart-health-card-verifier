@@ -47,7 +47,7 @@ import {
 
 import WelcomePage from './src/container/WelcomePage'
 import ScanQRPage from './src/container/ScanQRPage'
-import VerificationResultPage from './src/container/VerificationResultPage'
+import ScanedResultPage from './src/container/ScanedResultPage'
 import ErrorPage from './src/container/ErrorPage'
 
 import { RootStackParamList } from './src/types'
@@ -76,7 +76,7 @@ const App = () => {
                 <Stack.Navigator screenOptions={ { headerShown: false } }>
                   <Stack.Screen name="Welcome" component={ WelcomePage } />
                   <Stack.Screen name="ScanQR" component={ ScanQRPage } />
-                  <Stack.Screen name="VerificationResult" component={ VerificationResultPage } />
+                  <Stack.Screen name="ScannedResult" component={ ScanedResultPage } />
                   <Stack.Screen name="Error" component={ ErrorPage } />
                 </Stack.Navigator>
               </NavigationContainer>

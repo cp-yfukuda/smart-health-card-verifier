@@ -24,7 +24,7 @@ module.exports = {
     ".eslintrc.js", 
     '__tests__/**/*',
     'lib/**/*',
-    '../verifier-sdk/**/*'
+    '../parser-sdk/**/*'
   ],
   'env': {
     'react-native/react-native': true

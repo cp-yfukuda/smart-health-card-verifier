@@ -1,10 +1,10 @@
-import { ErrorCode } from 'verifier-sdk'
+import { ErrorCode } from 'parser-sdk'
 import { validate as jwsValidate } from './services/jws/jws-compact'
 import type { JWS } from './services/jws/types'
 
 const MAX_QR_CHUNK_LENGTH = 1191
 
-export const validate = async ( qr: string[] ): Promise<any> => {
+export const validate =  async ( qr: string[] ): Promise<any> => {
   const jwsString: JWS | undefined = shcChunksToJws(qr)
 
   const isJwsExtracted = !!jwsString
@@ -13,8 +13,8 @@ export const validate = async ( qr: string[] ): Promise<any> => {
     console.log('ERROR: JWS was not extracted')
     return undefined
   }
-
-  return await jwsValidate(jwsString as string)
+  let res =  await jwsValidate(jwsString as string)
+  return res;
 }
 
 function shcChunksToJws (shc: string[]): JWS | undefined {

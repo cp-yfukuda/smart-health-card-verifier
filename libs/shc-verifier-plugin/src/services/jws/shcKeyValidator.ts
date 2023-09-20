@@ -1,5 +1,5 @@
 import jose, { JWK } from 'node-jose'
-import { ErrorCode, InvalidError } from 'verifier-sdk'
+import { ErrorCode, InvalidError } from 'parser-sdk'
 import { KeySet, KeysStore } from './keys'
 
 const addIfKeyIsValidSHCFormat = async ( key: JWK.Key ): Promise< boolean > => {

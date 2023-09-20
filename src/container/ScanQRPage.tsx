@@ -5,12 +5,12 @@ import { useNetInfo } from '@react-native-community/netinfo'
 import BarCodeScanner from '../components/BarCodeScanner'
 import AppClickableImage from '../components/customImage'
 import NotificationOverlay from '../components/notificationOverlay'
-import { BaseResponse, ErrorCode } from 'verifier-sdk'
+import { BaseResponse, ErrorCode } from 'parser-sdk'
 import { Props,  } from '../types'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useTranslation } from '../services/i18n/i18nUtils'
 import MarkerLayerSVG from '../../assets/img/scanqr/markerlayer.svg'
-import { InvalidError } from 'verifier-sdk'
+import { InvalidError } from 'parser-sdk'
 import { RecordType } from '../../libs/shc-verifier-plugin/src/services/fhir/fhirTypes'
 import { ModuleService } from '../services/module/ModuleService'
 
@@ -166,11 +166,11 @@ const ScanQRPage = ({ navigation }: Props) => {
 
     try {
       setScanned(true)
-      const verifier = await ModuleService.getModuleService().getScanner([data])
-      if( verifier ) {
-        let validationResult = await verifier.validate([data])
-         if ( validationResult && validationResult.isValid === true ) {
-          navigation.navigate({ name: 'VerificationResult', params: { validationResult } })
+      const parser = await ModuleService.getModuleService().getParser([data])
+      if( parser ) {
+        validationResult = await parser.validate([data])
+        if ( validationResult  && validationResult.isValid === true ) {
+          navigation.navigate({ name: 'ScannedResult', params: { validationResult } })
           return
         }
       }
@@ -178,17 +178,18 @@ const ScanQRPage = ({ navigation }: Props) => {
       return 
 
     } catch (error: any) {
+      console.info("#YF error = " + error )
       if (error instanceof InvalidError) {
         validationResult.isValid = false
         validationResult.errorCode = error.errorCode
-        navigation.navigate({ name: 'VerificationResult', params: { validationResult } })
+        navigation.navigate({ name: 'ScannedResult', params: { validationResult } })
         return
       }
 
       if (error.toString() === 'Error: Failed to download issuer JWK set') {
         validationResult.isValid = false
 
-        navigation.navigate({ name: 'VerificationResult', params: { validationResult } })
+        navigation.navigate({ name: 'ScannedResult', params: { validationResult } })
         return
       }
 

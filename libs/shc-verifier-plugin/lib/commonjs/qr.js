@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.validate = void 0;
-var _verifierSdk = require("verifier-sdk");
+var _parserSdk = require("parser-sdk");
 var _jwsCompact = require("./services/jws/jws-compact");
 const MAX_QR_CHUNK_LENGTH = 1191;
 const validate = async qr => {
@@ -14,7 +14,8 @@ const validate = async qr => {
     console.log('ERROR: JWS was not extracted');
     return undefined;
   }
-  return await (0, _jwsCompact.validate)(jwsString);
+  let res = await (0, _jwsCompact.validate)(jwsString);
+  return res;
 };
 exports.validate = validate;
 function shcChunksToJws(shc) {
@@ -27,12 +28,12 @@ function shcChunksToJws(shc) {
 
     const chunkIndex = chunkResult.chunkIndex;
     if (chunkResult.result.length > MAX_QR_CHUNK_LENGTH) {
-      console.log(`QR chunk ${chunkIndex} is larger than ${MAX_QR_CHUNK_LENGTH} bytes`, _verifierSdk.ErrorCode.INVALID_NUMERIC_QR);
+      console.log(`QR chunk ${chunkIndex} is larger than ${MAX_QR_CHUNK_LENGTH} bytes`, _parserSdk.ErrorCode.INVALID_NUMERIC_QR);
     }
     if (jwsChunks[chunkIndex - 1]) {
       // we have a chunk index collision
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-      console.log(`we have two chunks with index ${chunkIndex}`, _verifierSdk.ErrorCode.INVALID_NUMERIC_QR_HEADER);
+      console.log(`we have two chunks with index ${chunkIndex}`, _parserSdk.ErrorCode.INVALID_NUMERIC_QR_HEADER);
       return undefined;
     } else {
       jwsChunks[chunkIndex - 1] = chunkResult.result;
@@ -42,14 +43,14 @@ function shcChunksToJws(shc) {
   for (let i = 0; i < chunkCount; i++) {
     if (!jwsChunks[i]) {
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-      console.log('missing QR chunk ' + i, _verifierSdk.ErrorCode.MISSING_QR_CHUNK);
+      console.log('missing QR chunk ' + i, _parserSdk.ErrorCode.MISSING_QR_CHUNK);
       return undefined;
     }
   }
   if (shc.length > 1) console.log('All shc parts decoded');
   const jws = jwsChunks.join('');
   if (chunkCount > 1 && jws.length <= MAX_QR_CHUNK_LENGTH) {
-    console.log(`JWS of size ${jws.length} (<= ${MAX_QR_CHUNK_LENGTH}) didn't need to be split in ${chunkCount} chunks`, _verifierSdk.ErrorCode.INVALID_QR);
+    console.log(`JWS of size ${jws.length} (<= ${MAX_QR_CHUNK_LENGTH}) didn't need to be split in ${chunkCount} chunks`, _parserSdk.ErrorCode.INVALID_QR);
   }
 
   // check if chunk sizes are balanced
@@ -57,7 +58,7 @@ function shcChunksToJws(shc) {
   const balancedSizeBuffer = Math.ceil(expectedChunkSize * (0.5 / 100)); // give some leeway to what we call "balanced", 0.5% away from expected size
 
   if (jwsChunks.map(jwsChunk => jwsChunk.length).reduce((unbalanced, length) => unbalanced || length < expectedChunkSize - balancedSizeBuffer || length > expectedChunkSize + balancedSizeBuffer, false)) {
-    console.log('QR chunk sizes are unbalanced: ' + jwsChunks.map(jwsChunk => jwsChunk.length.toString()).join(), _verifierSdk.ErrorCode.UNBALANCED_QR_CHUNKS);
+    console.log('QR chunk sizes are unbalanced: ' + jwsChunks.map(jwsChunk => jwsChunk.length.toString()).join(), _parserSdk.ErrorCode.UNBALANCED_QR_CHUNKS);
   }
   return jws;
 }
@@ -77,19 +78,19 @@ function shcToJws(shc) {
     if (found) console.log(`${found}`);
     if (hasBadChunkCount) {
       const expectedChunkCount = parseInt(shc.substring(7, 8));
-      console.log(`Missing QR code chunk: received ${chunkCount}, expected ${expectedChunkCount}`, _verifierSdk.ErrorCode.MISSING_QR_CHUNK);
+      console.log(`Missing QR code chunk: received ${chunkCount}, expected ${expectedChunkCount}`, _parserSdk.ErrorCode.MISSING_QR_CHUNK);
       return undefined;
     }
   }
   if (chunked && isChunkedHeader) {
-    console.log(`Single-chunk numeric QR code should have a header ${qrHeader}, not ${qrHeader}1/1/`, _verifierSdk.ErrorCode.INVALID_NUMERIC_QR_HEADER);
+    console.log(`Single-chunk numeric QR code should have a header ${qrHeader}, not ${qrHeader}1/1/`, _parserSdk.ErrorCode.INVALID_NUMERIC_QR_HEADER);
     chunked = true; // interpret the code as chunked even though it shouldn't
   }
 
   const validQrHeader = new RegExp(chunked ? `^${qrHeader}${positiveIntRegExp}/${chunkCount}/.*$` : `^${qrHeader}.*$`, 'g').test(shc);
   if (!validQrHeader) {
     const expectedHeader = chunked ? `${qrHeader}${positiveIntRegExp}/${positiveIntRegExp}/` : `${qrHeader}`;
-    console.log(`Invalid numeric QR header: expected ${expectedHeader}`, _verifierSdk.ErrorCode.INVALID_NUMERIC_QR_HEADER);
+    console.log(`Invalid numeric QR header: expected ${expectedHeader}`, _parserSdk.ErrorCode.INVALID_NUMERIC_QR_HEADER);
     return undefined;
   }
 
@@ -97,7 +98,7 @@ function shcToJws(shc) {
   const validQrEncoding = new RegExp(chunked ? `^${qrHeader}${positiveIntRegExp}/${chunkCount}/[0-9]+$` : `^${qrHeader}[0-9]+$`, 'g').test(shc);
   if (!validQrEncoding) {
     const expectedBody = chunked ? `${qrHeader}${positiveIntRegExp}/${positiveIntRegExp}/[0-9]+` : `${qrHeader}[0-9]+`;
-    console.log(`Invalid numeric QR: expected ${expectedBody}`, _verifierSdk.ErrorCode.INVALID_NUMERIC_QR);
+    console.log(`Invalid numeric QR: expected ${expectedBody}`, _parserSdk.ErrorCode.INVALID_NUMERIC_QR);
     return undefined;
   }
 
@@ -106,7 +107,7 @@ function shcToJws(shc) {
     const found = shc.match(new RegExp(`^shc:/(?<chunkIndex>${positiveIntRegExp})`));
     chunkIndex = found && found.groups && found.groups.chunkIndex ? parseInt(found.groups.chunkIndex) : -1;
     if (chunkIndex < 1 || chunkIndex > chunkCount) {
-      console.log('Invalid QR chunk index: ' + chunkIndex, _verifierSdk.ErrorCode.INVALID_NUMERIC_QR_HEADER);
+      console.log('Invalid QR chunk index: ' + chunkIndex, _parserSdk.ErrorCode.INVALID_NUMERIC_QR_HEADER);
       return undefined;
     }
   }
@@ -114,7 +115,7 @@ function shcToJws(shc) {
   const b64Offset = '-'.charCodeAt(0);
   const digitPairs = shc.substring(bodyIndex).match(/(\d\d?)/g);
   if (digitPairs == null || digitPairs[digitPairs.length - 1].length == 1) {
-    console.log("Invalid numeric QR code, can't parse digit pairs. Numeric values should have even length.\n" + 'Make sure no leading 0 are deleted from the encoding.', _verifierSdk.ErrorCode.INVALID_NUMERIC_QR);
+    console.log("Invalid numeric QR code, can't parse digit pairs. Numeric values should have even length.\n" + 'Make sure no leading 0 are deleted from the encoding.', _parserSdk.ErrorCode.INVALID_NUMERIC_QR);
     return undefined;
   }
 
@@ -122,7 +123,7 @@ function shcToJws(shc) {
   // expected value is 0 (ascii(-) - 45) and the biggest one is 77 (ascii(z) - 45), check that each pair
   // is no larger than 77
   if (Math.max(...digitPairs.map(d => Number.parseInt(d))) > 77) {
-    console.log("Invalid numeric QR code, one digit pair is bigger than the max value 77 (encoding of 'z')." + 'Make sure you followed the encoding rules.', _verifierSdk.ErrorCode.INVALID_NUMERIC_QR);
+    console.log("Invalid numeric QR code, one digit pair is bigger than the max value 77 (encoding of 'z')." + 'Make sure you followed the encoding rules.', _parserSdk.ErrorCode.INVALID_NUMERIC_QR);
     return undefined;
   }
 

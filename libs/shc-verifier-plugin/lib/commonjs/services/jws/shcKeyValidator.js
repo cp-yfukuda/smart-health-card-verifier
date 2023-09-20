@@ -5,12 +5,12 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.verifyAndImportHealthCardIssuerKey = void 0;
 var _nodeJose = _interopRequireDefault(require("node-jose"));
-var _verifierSdk = require("verifier-sdk");
+var _parserSdk = require("parser-sdk");
 var _keys = require("./keys");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 const addIfKeyIsValidSHCFormat = async key => {
   if (!key.kid || typeof key.kid !== 'string') {
-    console.log('key does not contain kid field', _verifierSdk.ErrorCode.INVALID_KEY_PRIVATE);
+    console.log('key does not contain kid field', _parserSdk.ErrorCode.INVALID_KEY_PRIVATE);
     return false;
   }
   const keyName = `key[${String(key.kid)}]`;
@@ -19,33 +19,33 @@ const addIfKeyIsValidSHCFormat = async key => {
   // value will be the corresponding public key)
   // Note: this is RSA/ECDSA specific, but ok since ECDSA is mandated
   if (key.d) {
-    console.log(`${keyName}: key contains private key material.`, _verifierSdk.ErrorCode.INVALID_KEY_PRIVATE);
+    console.log(`${keyName}: key contains private key material.`, _parserSdk.ErrorCode.INVALID_KEY_PRIVATE);
     return false;
   }
   // check that EC curve is 'ES256'
   if (!key.alg) {
-    console.log(keyName + ': ' + "'alg' missing in issuer key", _verifierSdk.ErrorCode.INVALID_KEY_SCHEMA);
+    console.log(keyName + ': ' + "'alg' missing in issuer key", _parserSdk.ErrorCode.INVALID_KEY_SCHEMA);
     return false;
   } else if (key.alg !== 'ES256') {
-    console.log(`${keyName}: wrong algorithm in issuer key. expected: 'ES256', actual: ${String(key.alg)}`, _verifierSdk.ErrorCode.INVALID_KEY_WRONG_ALG);
+    console.log(`${keyName}: wrong algorithm in issuer key. expected: 'ES256', actual: ${String(key.alg)}`, _parserSdk.ErrorCode.INVALID_KEY_WRONG_ALG);
     return false;
   }
 
   // check that key type is 'EC'
   if (!key.kty) {
-    console.log(`${keyName}:'kty' missing in issuer key`, _verifierSdk.ErrorCode.INVALID_KEY_SCHEMA);
+    console.log(`${keyName}:'kty' missing in issuer key`, _parserSdk.ErrorCode.INVALID_KEY_SCHEMA);
     return false;
   } else if (key.kty !== 'EC') {
-    console.log(`${keyName}:wrong key type in issuer key. expected: 'EC', actual: ${String(key.kty)} `, _verifierSdk.ErrorCode.INVALID_KEY_WRONG_KTY);
+    console.log(`${keyName}:wrong key type in issuer key. expected: 'EC', actual: ${String(key.kty)} `, _parserSdk.ErrorCode.INVALID_KEY_WRONG_KTY);
     return false;
   }
 
   // check that usage is 'sig'
   if (!key.use) {
-    console.log(`${keyName}:'use' missing in issuer key`, _verifierSdk.ErrorCode.INVALID_KEY_SCHEMA);
+    console.log(`${keyName}:'use' missing in issuer key`, _parserSdk.ErrorCode.INVALID_KEY_SCHEMA);
     return false;
   } else if (key.use !== 'sig') {
-    console.log(`${keyName}:wrong usage in issuer key. expected: 'sig', actual: ${String(key.use)}`, _verifierSdk.ErrorCode.INVALID_KEY_WRONG_USE);
+    console.log(`${keyName}:wrong usage in issuer key. expected: 'sig', actual: ${String(key.use)}`, _parserSdk.ErrorCode.INVALID_KEY_WRONG_USE);
     return false;
   }
   try {
@@ -54,12 +54,12 @@ const addIfKeyIsValidSHCFormat = async key => {
     const thumbprint = _nodeJose.default.util.base64url.encode(tpDigest);
     if (key.kid !== thumbprint) {
       console.log(`${keyName}:'kid' does not match thumbprint in issuer key. expected: \
-                    ${String(thumbprint)} , actual: ${String(key.kid)}`, _verifierSdk.ErrorCode.INVALID_KEY_WRONG_KID);
-      jwkKey.error = new _verifierSdk.InvalidError(_verifierSdk.ErrorCode.INVALID_KEY_WRONG_KID);
+                    ${String(thumbprint)} , actual: ${String(key.kid)}`, _parserSdk.ErrorCode.INVALID_KEY_WRONG_KID);
+      jwkKey.error = new _parserSdk.InvalidError(_parserSdk.ErrorCode.INVALID_KEY_WRONG_KID);
       return false;
     }
   } catch (err) {
-    console.log(`${keyName}: Failed to calculate issuer key thumbprint : ${err}`, _verifierSdk.ErrorCode.INVALID_KEY_UNKNOWN);
+    console.log(`${keyName}: Failed to calculate issuer key thumbprint : ${err}`, _parserSdk.ErrorCode.INVALID_KEY_UNKNOWN);
     return false;
   }
   return true;
@@ -67,7 +67,7 @@ const addIfKeyIsValidSHCFormat = async key => {
 const verifyAndImportHealthCardIssuerKey = async keySet => {
   // check that keySet is valid
   if (!(keySet instanceof Object) || !keySet.keys || !(keySet.keys instanceof Array)) {
-    console.log('keySet not valid. Expect {keys : JWK.Key[]}', _verifierSdk.ErrorCode.INVALID_KEY_SCHEMA);
+    console.log('keySet not valid. Expect {keys : JWK.Key[]}', _parserSdk.ErrorCode.INVALID_KEY_SCHEMA);
     return;
   }
   for (let i = 0; i < keySet.keys.length; i++) {
@@ -79,7 +79,7 @@ const verifyAndImportHealthCardIssuerKey = async keySet => {
         console.debug(`Key [${String(i)}] is not added`);
       }
     } catch (error) {
-      console.log('Error adding key to keyStore : ' + error.message, _verifierSdk.ErrorCode.INVALID_KEY_UNKNOWN);
+      console.log('Error adding key to keyStore : ' + error.message, _parserSdk.ErrorCode.INVALID_KEY_UNKNOWN);
     }
   }
 };

@@ -1,1 +1,1 @@
-export declare type JWS = string;
+export type JWS = string;

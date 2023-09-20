@@ -8,21 +8,21 @@ exports.getRecordTypeFromPayload = getRecordTypeFromPayload;
 exports.isResourceType = isResourceType;
 var _lodash = _interopRequireDefault(require("lodash"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-let RecordType;
-exports.RecordType = RecordType;
-(function (RecordType) {
+let RecordType = /*#__PURE__*/function (RecordType) {
   RecordType["unknown"] = "unknown";
   RecordType["immunization"] = "immunization";
   RecordType["covid19LabResult"] = "covid19-lab-result";
-})(RecordType || (exports.RecordType = RecordType = {}));
-let ResourceType;
-exports.ResourceType = ResourceType;
-(function (ResourceType) {
+  return RecordType;
+}({});
+exports.RecordType = RecordType;
+let ResourceType = /*#__PURE__*/function (ResourceType) {
   ResourceType["Unknown"] = "Unknown";
   ResourceType["Immunization"] = "Immunization";
   ResourceType["Patient"] = "Patient";
   ResourceType["Observation"] = "Observation";
-})(ResourceType || (exports.ResourceType = ResourceType = {}));
+  return ResourceType;
+}({});
+exports.ResourceType = ResourceType;
 const availableRecordTypes = [RecordType.immunization, RecordType.covid19LabResult];
 exports.availableRecordTypes = availableRecordTypes;
 const acceptedVCType = {

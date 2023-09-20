@@ -1,8 +1,8 @@
 /* eslint no-catch-shadow: off, no-shadow: off */
 import pako from 'pako';
 import jose from 'node-jose';
-import { InvalidError, Utils, Timer } from 'verifier-sdk';
-import { ErrorCode } from 'verifier-sdk';
+import { InvalidError, Utils, Timer } from 'parser-sdk';
+import { ErrorCode } from 'parser-sdk';
 import { getVerifierInitOption, VerifierKey } from '../../models/Config';
 import { KeysStore } from './keys';
 import * as jwsPayload from './jws-payload';
@@ -49,8 +49,7 @@ export async function validate(jws) {
       console.log('ERROR at jwsPayload.validate!');
     }
   } catch (err) {
-    console.log('ERROR at jwsPayload.validate!');
-    //#TODO throw error? 
+    throw err;
   }
   // try to parse JSON even if it failed validation above
   // if we did not get a payload back, it failed to be parsed and we cannot extract the key url

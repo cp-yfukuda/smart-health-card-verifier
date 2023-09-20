@@ -1,4 +1,4 @@
-import type { VerifierInitOption, VaccineCodeItemType } from 'verifier-sdk'
+import type { VerifierInitOption, VaccineCodeItemType } from 'parser-sdk'
 
 
 

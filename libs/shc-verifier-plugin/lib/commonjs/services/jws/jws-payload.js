@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.schema = void 0;
 exports.validate = validate;
-var _verifierSdk = require("verifier-sdk");
+var _parserSdk = require("parser-sdk");
 var _smartHealthCardVcSchema = _interopRequireDefault(require("../../schemas/smart-health-card-vc-schema.json"));
 var fhirBundle = _interopRequireWildcard(require("../fhir/fhirBundle"));
 var _fhirTypes = require("../fhir/fhirTypes");
@@ -16,19 +16,21 @@ const schema = _smartHealthCardVcSchema.default;
 exports.schema = schema;
 async function validate(jwsPayloadText) {
   if (jwsPayloadText.trim() !== jwsPayloadText) {
-    console.log('JWS payload has leading or trailing spaces', _verifierSdk.ErrorCode.TRAILING_CHARACTERS);
+    console.log('JWS payload has leading or trailing spaces', _parserSdk.ErrorCode.TRAILING_CHARACTERS);
     jwsPayloadText = jwsPayloadText.trim();
   }
-  const jwsPayload = _verifierSdk.Utils.parseJson(jwsPayloadText);
+  const jwsPayload = _parserSdk.Utils.parseJson(jwsPayloadText);
   const isJwsPayloadValid = checkJwsPayload(jwsPayload);
-  if (!isJwsPayloadValid) return Promise.reject(false);
+  if (!isJwsPayloadValid) {
+    return Promise.reject(false);
+  }
   const fhirBundleJson = jwsPayload === null || jwsPayload === void 0 ? void 0 : jwsPayload.vc.credentialSubject.fhirBundle;
   const recordType = (0, _fhirTypes.getRecordTypeFromPayload)(jwsPayload);
   return fhirBundle.validate(recordType, fhirBundleJson);
 }
 function checkJwsPayload(jwsPayload) {
   if (!jwsPayload || typeof jwsPayload !== 'object') {
-    console.log('Failed to parse JWS.payload data as JSON.', _verifierSdk.ErrorCode.JSON_PARSE_ERROR);
+    console.log('Failed to parse JWS.payload data as JSON.', _parserSdk.ErrorCode.JSON_PARSE_ERROR);
     return false;
   }
   // validate issuance date
@@ -40,20 +42,20 @@ function checkJwsPayload(jwsPayload) {
       // we will assume the nbf was encoded in milliseconds, and we will return an error
       const dateParsedInMilliseconds = new Date();
       dateParsedInMilliseconds.setTime(jwsPayload.nbf);
-      console.log(`Health card is not yet valid, nbf=${jwsPayload.nbf} (${nbf.toUTCString()}).\n` + 'nbf should be encoded in seconds since 1970-01-01T00:00:00Z UTC.\n' + `Did you encode the date in milliseconds, which would give the date: ${dateParsedInMilliseconds.toUTCString()}?`, _verifierSdk.ErrorCode.NOT_YET_VALID);
+      console.log(`Health card is not yet valid, nbf=${jwsPayload.nbf} (${nbf.toUTCString()}).\n` + 'nbf should be encoded in seconds since 1970-01-01T00:00:00Z UTC.\n' + `Did you encode the date in milliseconds, which would give the date: ${dateParsedInMilliseconds.toUTCString()}?`, _parserSdk.ErrorCode.NOT_YET_VALID);
     } else {
-      console.log(`Health card is not yet valid, nbf=${jwsPayload.nbf} (${nbf.toUTCString()}).`, _verifierSdk.ErrorCode.NOT_YET_VALID);
+      console.log(`Health card is not yet valid, nbf=${jwsPayload.nbf} (${nbf.toUTCString()}).`, _parserSdk.ErrorCode.NOT_YET_VALID);
     }
   }
   if (!jwsPayload.vc.type || !jwsPayload.vc.type.includes('https://smarthealth.cards#health-card')) {
-    console.log("JWS.payload.vc.type should contain 'https://smarthealth.cards#health-card'", _verifierSdk.ErrorCode.SCHEMA_ERROR);
-    throw new _verifierSdk.InvalidError(_verifierSdk.ErrorCode.SCHEMA_ERROR);
+    console.log("JWS.payload.vc.type should contain 'https://smarthealth.cards#health-card'", _parserSdk.ErrorCode.SCHEMA_ERROR);
+    throw new _parserSdk.InvalidError(_parserSdk.ErrorCode.SCHEMA_ERROR);
   }
 
   // to continue validation, we must have a FHIR bundle string to validate
   if (!jwsPayload.vc || !jwsPayload.vc.credentialSubject || !jwsPayload.vc.credentialSubject.fhirBundle) {
     // The schema check above will list the expected properties/type
-    console.log('JWS.payload.vc.credentialSubject.fhirBundle{} required to continue.', _verifierSdk.ErrorCode.CRITICAL_DATA_MISSING);
+    console.log('JWS.payload.vc.credentialSubject.fhirBundle{} required to continue.', _parserSdk.ErrorCode.CRITICAL_DATA_MISSING);
     return false;
   }
   return true;

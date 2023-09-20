@@ -1,5 +1,5 @@
-import type { VerifierInitOption, VaccineCodeItemType } from 'verifier-sdk';
-declare type ValidateIssuerReturnType = any | null;
+import type { VerifierInitOption, VaccineCodeItemType } from 'parser-sdk';
+type ValidateIssuerReturnType = any | null;
 export interface ValidateIssuerFunction<T = unknown> {
     (verifierKey: string, issuer: T): ValidateIssuerReturnType;
 }
@@ -8,7 +8,7 @@ export interface AsyncIssuerValidateFunction<T = unknown> extends ValidateIssuer
     $async: true;
 }
 export declare type AnyIssuerValidateFunction<T = any> = ValidateIssuerFunction<T> | AsyncIssuerValidateFunction<T>;
-declare type CodesReturnType = string[];
+type CodesReturnType = string[];
 export interface GetGetAcceptedVaccineCodesFunction {
     (verifierKey: string): CodesReturnType;
 }

@@ -1,5 +1,5 @@
 import jose from 'node-jose';
-import { ErrorCode, InvalidError } from 'verifier-sdk';
+import { ErrorCode, InvalidError } from 'parser-sdk';
 import { KeysStore } from './keys';
 const addIfKeyIsValidSHCFormat = async key => {
   if (!key.kid || typeof key.kid !== 'string') {

@@ -1,4 +1,4 @@
-import { ErrorCode } from 'verifier-sdk'
+import { ErrorCode } from 'parser-sdk'
 import Ajv from 'ajv'
 import type { AnyValidateFunction, AnySchemaObject } from 'ajv/dist/core'
 import type { KeySet } from './keys'

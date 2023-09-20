@@ -1,4 +1,4 @@
-import { ErrorCode } from 'verifier-sdk';
+import { ErrorCode } from 'parser-sdk';
 import { validate as jwsValidate } from './services/jws/jws-compact';
 const MAX_QR_CHUNK_LENGTH = 1191;
 export const validate = async qr => {
@@ -8,7 +8,8 @@ export const validate = async qr => {
     console.log('ERROR: JWS was not extracted');
     return undefined;
   }
-  return await jwsValidate(jwsString);
+  let res = await jwsValidate(jwsString);
+  return res;
 };
 function shcChunksToJws(shc) {
   const chunkCount = shc.length;

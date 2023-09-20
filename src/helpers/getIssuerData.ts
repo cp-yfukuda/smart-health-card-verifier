@@ -1,4 +1,4 @@
-import { ErrorCode, Timer} from 'verifier-sdk'
+import { ErrorCode, Timer} from 'parser-sdk'
 import { issuerNameLookUpUrl, issuerStatus, issuersUrl, ApiTimeout } from '~/models/constants'
 import { getInstallationIdManually, fetchWithTimeout } from '~/utils/utils'
 import { DataKeys, loadDataOrRetrieveLocally, getDataService } from '~/services/data/DataService'

@@ -7,7 +7,7 @@ exports.JwsValidationOptions = void 0;
 exports.validate = validate;
 var _pako = _interopRequireDefault(require("pako"));
 var _nodeJose = _interopRequireDefault(require("node-jose"));
-var _verifierSdk = require("verifier-sdk");
+var _parserSdk = require("parser-sdk");
 var _Config = require("../../models/Config");
 var _keys = require("./keys");
 var jwsPayload = _interopRequireWildcard(require("./jws-payload"));
@@ -29,16 +29,16 @@ const MAX_JWS_SINGLE_CHUNK_LENGTH = 1195;
 async function validate(jws) {
   _keys.KeysStore.resetStore();
   if (jws.trim() !== jws) {
-    console.log('JWS has leading or trailing spaces', _verifierSdk.ErrorCode.TRAILING_CHARACTERS);
+    console.log('JWS has leading or trailing spaces', _parserSdk.ErrorCode.TRAILING_CHARACTERS);
     jws = jws.trim();
   }
   if (jws.length > MAX_JWS_SINGLE_CHUNK_LENGTH) {
-    console.log(`JWS is longer than ${MAX_JWS_SINGLE_CHUNK_LENGTH} characters, and will result in split QR codes`, _verifierSdk.ErrorCode.JWS_TOO_LONG);
+    console.log(`JWS is longer than ${MAX_JWS_SINGLE_CHUNK_LENGTH} characters, and will result in split QR codes`, _parserSdk.ErrorCode.JWS_TOO_LONG);
   }
   const jwsRegex = /[0-9a-zA-Z_-]+\.[0-9a-zA-Z_-]+\.[0-9a-zA-Z_-]+/g;
   const isJws = jwsRegex.test(jws);
   if (!isJws) {
-    console.log("Failed to parse JWS-compact data as 'base64url.base64url.base64url' string.", _verifierSdk.ErrorCode.JSON_PARSE_ERROR);
+    console.log("Failed to parse JWS-compact data as 'base64url.base64url.base64url' string.", _parserSdk.ErrorCode.JSON_PARSE_ERROR);
     return false;
   }
 
@@ -60,14 +60,13 @@ async function validate(jws) {
       console.log('ERROR at jwsPayload.validate!');
     }
   } catch (err) {
-    console.log('ERROR at jwsPayload.validate!');
-    //#TODO throw error? 
+    throw err;
   }
   // try to parse JSON even if it failed validation above
   // if we did not get a payload back, it failed to be parsed and we cannot extract the key url
   // so we can stop. The jws-payload child will contain the parse errors.
   // The payload validation may have a Fatal error
-  const payload = _verifierSdk.Utils.parseJson(inflatedPayload || b64DecodedPayloadString || rawPayload);
+  const payload = _parserSdk.Utils.parseJson(inflatedPayload || b64DecodedPayloadString || rawPayload);
   if (!payload) {
     console.log('NO PAYLOAD!!');
     return;
@@ -75,7 +74,7 @@ async function validate(jws) {
   try {
     await extractKeyURL(payload);
   } catch (err) {
-    if (err instanceof _verifierSdk.InvalidError) throw err;
+    if (err instanceof _parserSdk.InvalidError) throw err;
     return;
   }
   const result = false;
@@ -91,7 +90,7 @@ async function fetchWithTimeout(url, options, timeout, timeoutError) {
   return await Promise.race([fetch(url, options), new Promise((_, reject) => setTimeout(() => reject(new Error(timeoutError)), timeout))]);
 }
 async function downloadAndImportValidKeys(issuerURL) {
-  const timer = new _verifierSdk.Timer();
+  const timer = new _parserSdk.Timer();
   const jwkURL = issuerURL + '/.well-known/jwks.json';
   const requestedOrigin = 'https://example.org'; // request bogus origin to test CORS response
 
@@ -104,7 +103,7 @@ async function downloadAndImportValidKeys(issuerURL) {
         Origin: requestedOrigin
       }
     }, timeout, timeoutError).catch(_ => {
-      throw new _verifierSdk.InvalidError(_verifierSdk.ErrorCode.ISSUER_KEY_DOWNLOAD_ERROR);
+      throw new _parserSdk.InvalidError(_parserSdk.ErrorCode.ISSUER_KEY_DOWNLOAD_ERROR);
     });
     const keySet = await responseRaw.json();
     let loadingTime = timer.stop();
@@ -119,12 +118,12 @@ async function downloadAndImportValidKeys(issuerURL) {
       console.log(`verification took:  ${loadingTime.toFixed(2)}sec`);
       return true;
     } catch (err) {
-      console.log(`Can't parse downloaded issuer JWK set: ${String(err.message)}`, _verifierSdk.ErrorCode.ISSUER_KEY_DOWNLOAD_ERROR);
+      console.log(`Can't parse downloaded issuer JWK set: ${String(err.message)}`, _parserSdk.ErrorCode.ISSUER_KEY_DOWNLOAD_ERROR);
       return false;
     }
   } catch (err) {
-    if (err instanceof _verifierSdk.InvalidError) throw err;
-    console.log(`Failed to download issuer JWK set:  ${String(err.message)}`, _verifierSdk.ErrorCode.ISSUER_KEY_DOWNLOAD_ERROR);
+    if (err instanceof _parserSdk.InvalidError) throw err;
+    console.log(`Failed to download issuer JWK set:  ${String(err.message)}`, _parserSdk.ErrorCode.ISSUER_KEY_DOWNLOAD_ERROR);
     // return undefined
 
     throw new Error(timeoutError);
@@ -139,28 +138,28 @@ function checkJwsHeader(header) {
     errString = err;
   } finally {
     if (!headerBytes) {
-      console.log(['Error base64-decoding the JWS header.', errString].join('\n'), _verifierSdk.ErrorCode.JWS_VERIFICATION_ERROR);
+      console.log(['Error base64-decoding the JWS header.', errString].join('\n'), _parserSdk.ErrorCode.JWS_VERIFICATION_ERROR);
     }
   }
   let headerJson;
   if (headerBytes) {
-    headerJson = _verifierSdk.Utils.parseJson(headerBytes.toString());
+    headerJson = _parserSdk.Utils.parseJson(headerBytes.toString());
     if (headerJson == null) {
-      console.log(["Can't parse JWS header as JSON.", errString].join('\n'), _verifierSdk.ErrorCode.JWS_HEADER_ERROR);
+      console.log(["Can't parse JWS header as JSON.", errString].join('\n'), _parserSdk.ErrorCode.JWS_HEADER_ERROR);
     } else {
       const headerKeys = Object.keys(headerJson);
       if (!headerKeys.includes('alg')) {
-        console.log("JWS header missing 'alg' property.", _verifierSdk.ErrorCode.JWS_HEADER_ERROR);
+        console.log("JWS header missing 'alg' property.", _parserSdk.ErrorCode.JWS_HEADER_ERROR);
       } else if (headerJson.alg !== 'ES256') {
-        console.log(`Wrong value for JWS header property 'alg' property expected: "ES256", actual: "${headerJson.alg}".`, _verifierSdk.ErrorCode.JWS_HEADER_ERROR);
+        console.log(`Wrong value for JWS header property 'alg' property expected: "ES256", actual: "${headerJson.alg}".`, _parserSdk.ErrorCode.JWS_HEADER_ERROR);
       }
       if (!headerKeys.includes('zip')) {
-        console.log("JWS header missing 'zip' property.", _verifierSdk.ErrorCode.JWS_HEADER_ERROR);
+        console.log("JWS header missing 'zip' property.", _parserSdk.ErrorCode.JWS_HEADER_ERROR);
       } else if (headerJson.zip !== 'DEF') {
-        console.log(`Wrong value for JWS header property 'zip' property expected: "DEF", actual: "${headerJson.zip}".`, _verifierSdk.ErrorCode.JWS_HEADER_ERROR);
+        console.log(`Wrong value for JWS header property 'zip' property expected: "DEF", actual: "${headerJson.zip}".`, _parserSdk.ErrorCode.JWS_HEADER_ERROR);
       }
       if (!headerKeys.includes('kid')) {
-        console.log("JWS header missing 'kid' property.", _verifierSdk.ErrorCode.JWS_HEADER_ERROR);
+        console.log("JWS header missing 'kid' property.", _parserSdk.ErrorCode.JWS_HEADER_ERROR);
       }
 
       // the value of the kid will be used in the crypto validation of the signature to select the issuer's public key
@@ -174,10 +173,10 @@ function checkJwsSignatureFormat(key) {
   try {
     sigBytes = Buffer.from(key, 'base64');
   } catch (err) {
-    console.log(['Error base64-decoding the JWS signature.', err].join('\n'), _verifierSdk.ErrorCode.JWS_VERIFICATION_ERROR);
+    console.log(['Error base64-decoding the JWS signature.', err].join('\n'), _parserSdk.ErrorCode.JWS_VERIFICATION_ERROR);
   }
   if (sigBytes && sigBytes.length > 64 && sigBytes[0] === 0x30 && sigBytes[2] === 0x02) {
-    console.log('Signature appears to be in DER encoded form. Signature is expected to be 64-byte r||s concatenated form.\n' + 'See https://tools.ietf.org/html/rfc7515#appendix-A.3 for expected ES256 signature form.', _verifierSdk.ErrorCode.SIGNATURE_FORMAT_ERROR);
+    console.log('Signature appears to be in DER encoded form. Signature is expected to be 64-byte r||s concatenated form.\n' + 'See https://tools.ietf.org/html/rfc7515#appendix-A.3 for expected ES256 signature form.', _parserSdk.ErrorCode.SIGNATURE_FORMAT_ERROR);
 
     // DER encoded signature will constructed as follows:
     // 0       |1             |2      |3         |4-35             |36       |37        |38-69
@@ -200,7 +199,7 @@ function checkJwsSignatureFormat(key) {
     key = newSig;
     console.log('jws-signature converted from DER form to r||s form: ' + newSig);
   } else if (sigBytes && sigBytes.length !== 64) {
-    console.log('Signature is ' + sigBytes.length.toString() + '-bytes. Signature is expected to be 64-bytes', _verifierSdk.ErrorCode.SIGNATURE_FORMAT_ERROR);
+    console.log('Signature is ' + sigBytes.length.toString() + '-bytes. Signature is expected to be 64-bytes', _parserSdk.ErrorCode.SIGNATURE_FORMAT_ERROR);
   }
   return key;
 }
@@ -211,7 +210,7 @@ function checkJwsPayload(rawPayload) {
   try {
     b64DecodedPayloadBuffer = Buffer.from(rawPayload, 'base64');
   } catch (err) {
-    console.log(['Error base64-decoding the JWS payload.', err].join('\n'), _verifierSdk.ErrorCode.JWS_VERIFICATION_ERROR);
+    console.log(['Error base64-decoding the JWS payload.', err].join('\n'), _parserSdk.ErrorCode.JWS_VERIFICATION_ERROR);
   }
   let inflatedPayload;
   if (b64DecodedPayloadBuffer) {
@@ -225,9 +224,9 @@ function checkJwsPayload(rawPayload) {
         inflatedPayload = _pako.default.inflate(b64DecodedPayloadBuffer, {
           to: 'string'
         }).trim();
-        console.log('Error inflating JWS payload. Compression should use raw DEFLATE (without wrapper header and adler32 crc)', _verifierSdk.ErrorCode.INFLATION_ERROR);
+        console.log('Error inflating JWS payload. Compression should use raw DEFLATE (without wrapper header and adler32 crc)', _parserSdk.ErrorCode.INFLATION_ERROR);
       } catch (err) {
-        console.log(['Error inflating JWS payload. Did you use raw DEFLATE compression?', err].join('\n'), _verifierSdk.ErrorCode.INFLATION_ERROR);
+        console.log(['Error inflating JWS payload. Did you use raw DEFLATE compression?', err].join('\n'), _parserSdk.ErrorCode.INFLATION_ERROR);
         // inflating failed, let's try to parse the base64-decoded string directly
         b64DecodedPayloadString = b64DecodedPayloadBuffer.toString('utf-8').trim();
       }
@@ -242,10 +241,10 @@ async function extractKeyURL(payload) {
   if (payload.iss) {
     if (typeof payload.iss === 'string') {
       if (payload.iss.slice(0, 8) !== 'https://') {
-        console.log('Issuer URL SHALL use https', _verifierSdk.ErrorCode.INVALID_ISSUER_URL);
+        console.log('Issuer URL SHALL use https', _parserSdk.ErrorCode.INVALID_ISSUER_URL);
       }
       if (payload.iss.slice(-1) === '/') {
-        console.log('Issuer URL SHALL NOT include a trailing /', _verifierSdk.ErrorCode.INVALID_ISSUER_URL);
+        console.log('Issuer URL SHALL NOT include a trailing /', _parserSdk.ErrorCode.INVALID_ISSUER_URL);
       }
       // from issuer data in the vci directory, look for issuer data.
       var iss = payload.iss;
@@ -271,9 +270,9 @@ async function extractKeyURL(payload) {
 async function verifyJws(jws, kid) {
   var key = null;
   if (kid && !(key = _keys.KeysStore.store.get(kid))) {
-    console.log(`JWS verification failed: can't find key with 'kid' = ${kid} in issuer set`, _verifierSdk.ErrorCode.JWS_VERIFICATION_ERROR);
+    console.log(`JWS verification failed: can't find key with 'kid' = ${kid} in issuer set`, _parserSdk.ErrorCode.JWS_VERIFICATION_ERROR);
   }
-  if (key && key.error && key.error instanceof _verifierSdk.InvalidError) {
+  if (key && key.error && key.error instanceof _parserSdk.InvalidError) {
     throw key.error;
   }
   const verifier = _nodeJose.default.JWS.createVerify(_keys.KeysStore.store);
@@ -283,7 +282,7 @@ async function verifyJws(jws, kid) {
   } catch (error) {
     // The error message is always 'no key found', regardless if a key is missing or
     // if the signature was tempered with. Don't return the node-jose error message.
-    console.log('JWS verification failed', _verifierSdk.ErrorCode.JWS_VERIFICATION_ERROR);
+    console.log('JWS verification failed', _parserSdk.ErrorCode.JWS_VERIFICATION_ERROR);
     return false;
   }
 }

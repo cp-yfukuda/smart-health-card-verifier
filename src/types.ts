@@ -1,5 +1,5 @@
 import { StackNavigationProp } from '@react-navigation/stack'
-import { RecordEntry, BaseResponse}  from 'verifier-sdk'
+import { RecordEntry, BaseResponse}  from 'parser-sdk'
 export interface RootStackParamList {
   Welcome: undefined
   ScanQR: undefined

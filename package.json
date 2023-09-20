@@ -47,7 +47,7 @@
     "react-test-renderer": "18.1.0",
     "shc-verifier-plugin": "file:libs/shc-verifier-plugin",
     "uuid": "^8.3.2",
-    "verifier-sdk": "file:libs/verifier-sdk",
+    "parser-sdk": "file:libs/parser-sdk",
     "webpack": "^5.66.0"
   },
   "devDependencies": {

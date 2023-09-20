@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.objPathToSchema = objPathToSchema;
 exports.validateSchema = validateSchema;
-var _verifierSdk = require("verifier-sdk");
+var _parserSdk = require("parser-sdk");
 var _ajv = _interopRequireDefault(require("ajv"));
 var _fhirSchema = _interopRequireDefault(require("../../schemas/fhir-schema.json"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -60,7 +60,7 @@ function validateSchema(schema, data) {
     // remove the duplicates (can be many if property part of oneOf[])
     errors = errors.filter((err, index) => errors.indexOf(err) === index);
     errors.forEach(ve => {
-      console.log(ve, isFhirSchema ? _verifierSdk.ErrorCode.FHIR_SCHEMA_ERROR : _verifierSdk.ErrorCode.SCHEMA_ERROR);
+      console.log(ve, isFhirSchema ? _parserSdk.ErrorCode.FHIR_SCHEMA_ERROR : _parserSdk.ErrorCode.SCHEMA_ERROR);
     });
     return false;
   } catch (err) {
@@ -69,7 +69,7 @@ function validateSchema(schema, data) {
       const property = err.missingRef.split('/').pop();
       console.log(`Schema: ${pathPrefix + property} additional property '${property}' not allowed.`);
     } else {
-      console.log('Schema: ' + err.message, isFhirSchema ? _verifierSdk.ErrorCode.FHIR_SCHEMA_ERROR : _verifierSdk.ErrorCode.SCHEMA_ERROR);
+      console.log('Schema: ' + err.message, isFhirSchema ? _parserSdk.ErrorCode.FHIR_SCHEMA_ERROR : _parserSdk.ErrorCode.SCHEMA_ERROR);
     }
     return false;
   }

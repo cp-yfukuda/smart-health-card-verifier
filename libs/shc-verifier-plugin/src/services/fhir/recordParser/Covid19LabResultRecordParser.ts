@@ -1,5 +1,5 @@
 import { ResourceType } from '../fhirTypes'
-import type { RecordEntry } from 'verifier-sdk'
+import type { RecordEntry } from 'parser-sdk'
 import R4Observation from './labResultParser/versions/R4Observation'
 import { sortRecordByDateField } from '../../../utils/utils'
 import type { JWSPayload, ParserFunction, ObservationParser}  from '../types'

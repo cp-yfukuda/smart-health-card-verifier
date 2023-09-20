@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _verifierSdk = require("verifier-sdk");
+var _parserSdk = require("parser-sdk");
 var _immunizationDm = _interopRequireDefault(require("../../../schemas/immunization-dm.json"));
 var _patientDm = _interopRequireDefault(require("../../../schemas/patient-dm.json"));
 var _fhirTypes = require("../fhirTypes");
@@ -14,17 +14,17 @@ const validate = async entries => {
   const profileName = _fhirTypes.RecordType.immunization;
   const immunizations = entries.filter(entry => entry.resource.resourceType === 'Immunization');
   if (immunizations.length === 0) {
-    console.log(`Profile : ${profileName} : requires 1 or more Immunization resources. Actual : ${immunizations.length.toString()}`, _verifierSdk.ErrorCode.PROFILE_ERROR);
+    console.log(`Profile : ${profileName} : requires 1 or more Immunization resources. Actual : ${immunizations.length.toString()}`, _parserSdk.ErrorCode.PROFILE_ERROR);
     return Promise.reject(false);
   }
   const patients = entries.filter(entry => entry.resource.resourceType === 'Patient');
   if (patients.length !== 1) {
-    console.log(`Profile : ${profileName} : requires exactly 1 ${'Patient'} resource. Actual : ${patients.length.toString()}`, _verifierSdk.ErrorCode.PROFILE_ERROR);
+    console.log(`Profile : ${profileName} : requires exactly 1 ${'Patient'} resource. Actual : ${patients.length.toString()}`, _parserSdk.ErrorCode.PROFILE_ERROR);
   }
   const expectedResources = ['Patient', 'Immunization'];
   entries.forEach(async (entry, index) => {
     if (!expectedResources.includes(entry.resource.resourceType)) {
-      console.log(`Profile : ${profileName} : resourceType: ${entry.resource.resourceType} is not allowed.`, _verifierSdk.ErrorCode.PROFILE_ERROR);
+      console.log(`Profile : ${profileName} : resourceType: ${entry.resource.resourceType} is not allowed.`, _parserSdk.ErrorCode.PROFILE_ERROR);
       expectedResources.push(entry.resource.resourceType); // prevent duplicates
       return Promise.reject(false);
     }
@@ -39,20 +39,20 @@ const validate = async entries => {
       const _getCodeFunc = (0, _Config.getVerifierInitOption)().getAcceptedVaccineCodes;
       const cvxCodes = _getCodeFunc ? await _getCodeFunc("shc") : [];
       if (code && !cvxCodes.includes(code)) {
-        console.log(`Profile : ${profileName} : Immunization.vaccineCode.code ( ${code} ) requires valid COVID-19 code (${cvxCodes.join(',')}).`, _verifierSdk.ErrorCode.PROFILE_ERROR);
+        console.log(`Profile : ${profileName} : Immunization.vaccineCode.code ( ${code} ) requires valid COVID-19 code (${cvxCodes.join(',')}).`, _parserSdk.ErrorCode.PROFILE_ERROR);
       }
 
       // check for properties that are forbidden by the dm-profiles
       ;
       _immunizationDm.default.forEach(constraint => {
-        _verifierSdk.Utils.propPath(entry.resource, constraint.path) && console.log(`Profile : ${profileName} : entry[${index.toString()}].resource.${constraint.path} should not be present.`, _verifierSdk.ErrorCode.PROFILE_ERROR);
+        _parserSdk.Utils.propPath(entry.resource, constraint.path) && console.log(`Profile : ${profileName} : entry[${index.toString()}].resource.${constraint.path} should not be present.`, _parserSdk.ErrorCode.PROFILE_ERROR);
       });
     }
     if (entry.resource.resourceType === 'Patient') {
       // check for properties that are forbidden by the dm-profiles
       ;
       _patientDm.default.forEach(constraint => {
-        _verifierSdk.Utils.propPath(entry.resource, constraint.path) && console.log(`Profile : ${profileName} : entry[${index.toString()}].resource.${constraint.path} should not be present.`, _verifierSdk.ErrorCode.PROFILE_ERROR);
+        _parserSdk.Utils.propPath(entry.resource, constraint.path) && console.log(`Profile : ${profileName} : entry[${index.toString()}].resource.${constraint.path} should not be present.`, _parserSdk.ErrorCode.PROFILE_ERROR);
       });
     }
   });

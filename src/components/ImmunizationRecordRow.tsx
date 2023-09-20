@@ -1,5 +1,5 @@
 import React from 'react'
-import { RecordEntry, BaseResponse } from 'verifier-sdk'
+import { RecordEntry, BaseResponse } from 'parser-sdk'
 import { View, Image, StyleSheet, Text, PixelRatio, useWindowDimensions } from 'react-native'
 import { Table, Row } from 'react-native-table-component'
 import FontStyle from '../utils/FontStyleHelper'

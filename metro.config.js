@@ -27,7 +27,7 @@ module.exports = ( async () => {
         assetExts: assetExts.filter(ext => ext !== 'svg')    
       },
       watchFolders: [
-        path.resolve(__dirname, 'libs/verifier-sdk')
+        path.resolve(__dirname, 'libs/parser-sdk')
       ]
 
   };

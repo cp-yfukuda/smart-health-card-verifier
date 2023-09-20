@@ -1,4 +1,4 @@
-import { ErrorCode, Utils } from 'verifier-sdk'
+import { ErrorCode, Utils } from 'parser-sdk'
 import immunizationDM from '../../../schemas/immunization-dm.json'
 import patientDM from '../../../schemas/patient-dm.json'
 import { RecordType } from '../fhirTypes'

@@ -1,5 +1,5 @@
 /* This service handles local data interface */ 
-import { Timer } from 'verifier-sdk'
+import { Timer } from 'parser-sdk'
 import { fetchWithTimeout } from '../../utils/utils'
 import { ApiTimeout } from '~/models/constants'
 import { getStorage, KVStorage } from './Storage'

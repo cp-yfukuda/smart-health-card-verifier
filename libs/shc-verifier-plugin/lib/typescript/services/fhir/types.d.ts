@@ -1,7 +1,7 @@
-import type { RecordEntry } from 'verifier-sdk';
+import type { RecordEntry } from 'parser-sdk';
 import type { JWS } from '../jws/types';
-export declare type ParserFunction = (jwsPayload: JWSPayload) => RecordEntry[] | any | null;
-export declare type ValidateFunction = (entry: BundleEntry[]) => Promise<boolean>;
+export type ParserFunction = (jwsPayload: JWSPayload) => RecordEntry[] | any | null;
+export type ValidateFunction = (entry: BundleEntry[]) => Promise<boolean>;
 export interface HealthCard {
     verifiableCredential: JWS[];
 }
@@ -42,7 +42,7 @@ export interface BundleEntry {
     lotNumber?: unknown;
     performer?: unknown;
 }
-export declare type Resource = {
+export type Resource = {
     resourceType: string;
     subject?: any;
     code?: any;

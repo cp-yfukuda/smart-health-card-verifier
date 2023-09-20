@@ -1,5 +1,5 @@
 const path = require('path');
-const pak_sdk =  require('./libs/verifier-sdk/package.json');
+const pak_sdk =  require('./libs/parser-sdk/package.json');
 const pak_shc =  require('./libs/shc-verifier-plugin/package.json');
 
 module.exports = {

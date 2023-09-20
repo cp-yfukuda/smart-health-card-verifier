@@ -1,17 +1,17 @@
 import _ from 'lodash';
-export let RecordType;
-(function (RecordType) {
+export let RecordType = /*#__PURE__*/function (RecordType) {
   RecordType["unknown"] = "unknown";
   RecordType["immunization"] = "immunization";
   RecordType["covid19LabResult"] = "covid19-lab-result";
-})(RecordType || (RecordType = {}));
-export let ResourceType;
-(function (ResourceType) {
+  return RecordType;
+}({});
+export let ResourceType = /*#__PURE__*/function (ResourceType) {
   ResourceType["Unknown"] = "Unknown";
   ResourceType["Immunization"] = "Immunization";
   ResourceType["Patient"] = "Patient";
   ResourceType["Observation"] = "Observation";
-})(ResourceType || (ResourceType = {}));
+  return ResourceType;
+}({});
 export const availableRecordTypes = [RecordType.immunization, RecordType.covid19LabResult];
 export const acceptedVCType = {
   [RecordType.immunization]: ['https://smarthealth.cards#immunization', 'https://smarthealth.cards#health-card'],

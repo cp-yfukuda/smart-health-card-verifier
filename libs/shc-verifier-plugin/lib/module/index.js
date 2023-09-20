@@ -12,8 +12,11 @@ export class SHCVerifier {
     }
     return Promise.reject(null);
   }
-  validate(payloads) {
-    return qrValidate(payloads);
+  async validate(payloads) {
+    console.info("#YF index validate 1");
+    let res1 = await qrValidate(payloads);
+    console.info("#YF index validate res = " + JSON.stringify(res1));
+    return res1;
   }
 }
 //# sourceMappingURL=index.js.map

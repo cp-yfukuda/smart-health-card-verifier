@@ -1,4 +1,4 @@
-import type { RecordEntry } from 'verifier-sdk'
+import type { RecordEntry } from 'parser-sdk'
 import type { JWS } from '../jws/types'
 
 

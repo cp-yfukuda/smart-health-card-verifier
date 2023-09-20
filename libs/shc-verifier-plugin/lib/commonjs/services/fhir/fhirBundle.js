@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.getRecord = getRecord;
 exports.getTagKeys = getTagKeys;
 exports.validate = validate;
-var _verifierSdk = require("verifier-sdk");
+var _parserSdk = require("parser-sdk");
 var _schema = require("../jws/schema");
 var _fhirSchema = _interopRequireDefault(require("../../schemas/fhir-schema.json"));
 var _getPatiendDataFromFhir = require("./getPatiendDataFromFhir");
@@ -54,7 +54,7 @@ async function getRecord(payload) {
   const tagKeys = getTagKeys(payload);
   const recordEntries = await (0, _recordParser.default)(recordType, payload);
   if ((recordEntries === null || recordEntries === void 0 ? void 0 : recordEntries.length) === 0) {
-    throw new _verifierSdk.InvalidError(_verifierSdk.ErrorCode.NO_VALID_RECORD);
+    throw new _parserSdk.InvalidError(_parserSdk.ErrorCode.NO_VALID_RECORD);
   }
   const document = {
     issuedDate,
@@ -92,23 +92,23 @@ async function validate(recordType, fhirBundleJSON) {
       isFhirBundleValid = validateFhirBundle(fhirBundle);
     }
     if (!isFhirBundleValid) {
+      console.info("FHIR invalid");
       return Promise.reject(false);
     }
-
     // Validate each resource of .entry[]
     for (const [index, entry] of fhirBundle.entry.entries()) {
       validateFhirBundleEntry(entry, index);
       // walks the property tree of this resource object
       // the callback receives the child property and it's path objPathToSchema() maps a schema property to a property path
       // currently, oneOf types will break this system
-      _verifierSdk.Utils.walkProperties(entry.resource, [entry.resource.resourceType], (o, path) => {
+      _parserSdk.Utils.walkProperties(entry.resource, [entry.resource.resourceType], (o, path) => {
         const propType = (0, _schema.objPathToSchema)(path.join('.'));
         validatePropType(propType, index, path, o);
       });
 
       // with Bundle.entry.fullUrl populated with short resource-scheme URIs (e.g., {'fullUrl': 'resource:0})
       if (typeof entry.fullUrl !== 'string' || !/resource:\d+/.test(entry.fullUrl)) {
-        console.log('fhirBundle.entry.fullUrl should be short resource-scheme URIs (e.g., {"fullUrl": "resource:0"}', _verifierSdk.ErrorCode.FHIR_SCHEMA_ERROR);
+        console.log('fhirBundle.entry.fullUrl should be short resource-scheme URIs (e.g., {"fullUrl": "resource:0"}', _parserSdk.ErrorCode.FHIR_SCHEMA_ERROR);
       }
     }
     return (0, _recordValidator.default)(recordType, fhirBundle);
@@ -128,7 +128,7 @@ function validateFhirBundle(fhirBundle) {
   // to continue validation, we must have a list of resources in .entry[]
   if (!fhirBundle.entry || !(fhirBundle.entry instanceof Array) || fhirBundle.entry.length === 0) {
     // The schema check above will list the expected properties/type
-    console.log('FhirBundle.entry[] required to continue.', _verifierSdk.ErrorCode.CRITICAL_DATA_MISSING);
+    console.log('FhirBundle.entry[] required to continue.', _parserSdk.ErrorCode.CRITICAL_DATA_MISSING);
     return false;
   }
   return true;
@@ -148,34 +148,34 @@ function validateFhirBundleEntry(entry, i) {
   // validateSchema({ $ref: 'https://smarthealth.cards/schema/fhir-schema.json#/definitions/' + resource.resourceType }, resource, ['', 'entry', i.toString(), resource.resourceType].join('/'))
   if (resource.id) {
     console.log(`Bundle.entry[${i.toString()}].resource[${String(resource.resourceType)}]\
-       should not include .id elements`, _verifierSdk.ErrorCode.FHIR_SCHEMA_ERROR);
+       should not include .id elements`, _parserSdk.ErrorCode.FHIR_SCHEMA_ERROR);
   }
   if (resource.meta) {
     // resource.meta.security allowed as special case, however, no other properties may be included on .meta
     if (!resource.meta.security || Object.keys(resource.meta).length > 1) {
       console.log(`Bundle.entry[${i.toString()}].resource[${String(resource.resourceType)}].meta \
-       should only include .security property with an array of identity assurance codes`, _verifierSdk.ErrorCode.FHIR_SCHEMA_ERROR);
+       should only include .security property with an array of identity assurance codes`, _parserSdk.ErrorCode.FHIR_SCHEMA_ERROR);
     }
   }
   if (resource.text) {
     console.log(`Bundle.entry[${i.toString()}].resource[${String(resource.resourceType)}] \
-         should not include .text elements`, _verifierSdk.ErrorCode.FHIR_SCHEMA_ERROR);
+         should not include .text elements`, _parserSdk.ErrorCode.FHIR_SCHEMA_ERROR);
   }
 }
 function validatePropType(propType, i, path, o) {
   if (propType === 'CodeableConcept' && o.text) {
-    console.log('fhirBundle.entry[' + i.toString() + ']' + '.resource.' + path.join('.') + ' (CodeableConcept) should not include .text elements', _verifierSdk.ErrorCode.FHIR_SCHEMA_ERROR);
+    console.log('fhirBundle.entry[' + i.toString() + ']' + '.resource.' + path.join('.') + ' (CodeableConcept) should not include .text elements', _parserSdk.ErrorCode.FHIR_SCHEMA_ERROR);
   }
   if (propType === 'Coding' && o.display) {
-    console.log('fhirBundle.entry[' + i.toString() + ']' + '.resource.' + path.join('.') + ' (Coding) should not include .display elements', _verifierSdk.ErrorCode.FHIR_SCHEMA_ERROR);
+    console.log('fhirBundle.entry[' + i.toString() + ']' + '.resource.' + path.join('.') + ' (Coding) should not include .display elements', _parserSdk.ErrorCode.FHIR_SCHEMA_ERROR);
   }
   if (propType === 'Reference' && o.reference && !/[^:]+:\d+/.test(o.reference)) {
-    console.log('fhirBundle.entry[' + i.toString() + ']' + '.resource.' + path.join('.') + ' (Reference) should be short resource-scheme URIs (e.g., {“patient”: {“reference”: “resource:0”}})', _verifierSdk.ErrorCode.SCHEMA_ERROR);
+    console.log('fhirBundle.entry[' + i.toString() + ']' + '.resource.' + path.join('.') + ' (Reference) should be short resource-scheme URIs (e.g., {“patient”: {“reference”: “resource:0”}})', _parserSdk.ErrorCode.SCHEMA_ERROR);
   }
   if (
   // on empty string, empty object, empty array
   o instanceof Array && o.length === 0 || typeof o === 'string' && o === '' || o instanceof Object && Object.keys(o).length === 0) {
-    console.log('fhirBundle.entry[' + i.toString() + ']' + '.resource.' + path.join('.') + ' is empty. Empty elements are invalid.', _verifierSdk.ErrorCode.FHIR_SCHEMA_ERROR);
+    console.log('fhirBundle.entry[' + i.toString() + ']' + '.resource.' + path.join('.') + ' is empty. Empty elements are invalid.', _parserSdk.ErrorCode.FHIR_SCHEMA_ERROR);
   }
 }
 //# sourceMappingURL=fhirBundle.js.map
