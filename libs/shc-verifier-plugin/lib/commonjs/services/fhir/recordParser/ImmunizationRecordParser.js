@@ -18,6 +18,7 @@ const parse = async jwsPayload => {
     return (0, _fhirTypes.isResourceType)(entry, _fhirTypes.ResourceType.Immunization);
   }).map(entry => entry.resource);
   vaccineCodesHash = (0, _Config.getVerifierInitOption)().getVaccineCodesHash();
+  console.info("#YF ---------------- immunization entries === " + immunizationEntries.length )
   for (const [index, entry] of immunizationEntries.entries()) {
     const {
       status,
@@ -31,6 +32,7 @@ const parse = async jwsPayload => {
     } = vaccineCode === null || vaccineCode === void 0 ? void 0 : vaccineCode.coding[0];
     const isValidVaccinationCode = code && cvxCodes.includes(code);
     const isVaccineShotDone = (status || '').toLowerCase() === 'completed';
+    console.info("#YF immunization status === " + (status || '').toLowerCase()
     if (!isValidVaccinationCode) {
       console.log(`Immunization.vaccineCode.code (${String(code)}) requires valid COVID-19 code (${String(cvxCodes.join(','))}).`);
     }

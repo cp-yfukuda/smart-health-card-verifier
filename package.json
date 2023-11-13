@@ -46,6 +46,7 @@
     "react-native-table-component": "^1.2.2",
     "react-test-renderer": "18.1.0",
     "shc-verifier-plugin": "file:libs/shc-verifier-plugin",
+    "shl-viewer-plugin": "file:libs/shl-viewer-plugin",
     "uuid": "^8.3.2",
     "parser-sdk": "file:libs/parser-sdk",
     "webpack": "^5.66.0"

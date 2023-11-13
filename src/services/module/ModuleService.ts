@@ -1,5 +1,6 @@
 import { ParserFactory, IParserBase, VerifierInitOption } from 'parser-sdk'
 import { SHCVerifier } from 'shc-verifier-plugin'
+
 var promiseAny = require('promise.any');
 
 var moduleService: null| ModuleService;

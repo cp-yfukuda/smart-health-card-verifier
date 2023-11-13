@@ -33,10 +33,7 @@ class SHCVerifier {
     return Promise.reject(null);
   }
   async validate(payloads) {
-    console.info("#YF index validate 1");
-    let res1 = await (0, _qr.validate)(payloads);
-    console.info("#YF index validate res = " + JSON.stringify(res1));
-    return res1;
+    return await (0, _qr.validate)(payloads);
   }
 }
 exports.SHCVerifier = SHCVerifier;

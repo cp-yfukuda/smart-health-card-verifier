@@ -70,7 +70,6 @@ interface ResultParam {
 } 
 export default ( { recordEntries, issuedDate }: ResultParam ) => {
   const { t } = useTranslation()
-
   function insertTextToTable (
     vaccineName: string, lotNumber: string, vaccinationDate: string,  manufacturerName: string|null = null, groupName: string| null = null) {
     return ( <View style={ styles.recordEntries }>

@@ -61,7 +61,6 @@ const updateVaccineCode = ()=>{
     groupDisplay = groupDisplay || null
     acceptedVaccineCodes.push( code )
     vaccineCodesHash[code] = vaccineCode
-
   }
 }
 

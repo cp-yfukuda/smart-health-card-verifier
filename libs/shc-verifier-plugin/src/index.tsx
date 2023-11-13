@@ -24,10 +24,6 @@ export class SHCVerifier implements IParserBase {
   }
 
   async validate(payloads: string[]): Promise< null | BaseResponse > {
-    console.info("#YF index validate 1" )
-    let res1 =  await qrValidate( payloads );
-    console.info("#YF index validate res = " + JSON.stringify( res1 )  )
-    return res1;
+    return await qrValidate( payloads );
   }
-
 }

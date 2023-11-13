@@ -58,5 +58,4 @@ const validate: ValidateFunction = async (entries: BundleEntry[]): Promise<boole
   return Promise.resolve( labResults.length > 0 )
 }
 
-console.info('labResultsValidators/labresultValidator' + typeof validate)
 export default validate

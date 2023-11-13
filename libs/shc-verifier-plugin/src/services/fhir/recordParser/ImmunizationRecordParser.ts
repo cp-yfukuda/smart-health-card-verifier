@@ -8,7 +8,7 @@ var cvxCodes: string[] | null  = null
 var vaccineCodesHash: { [key: string]: VaccineCodeItemType } =  {}
 
 const parse: ParserFunction  = async (jwsPayload: JWSPayload): Promise< RecordEntry[] | null > => {
-  cvxCodes = cvxCodes || await getVerifierInitOption().getAcceptedVaccineCodes( VerifierKey )
+  cvxCodes = cvxCodes || await getVerifierInitOption().getAcceptedVaccineCodes( VerifierKey ) 
   const vaccinationData: RecordEntry[] = []
   const entries = jwsPayload?.vc?.credentialSubject?.fhirBundle?.entry
 
@@ -40,7 +40,6 @@ const parse: ParserFunction  = async (jwsPayload: JWSPayload): Promise< RecordEn
     if (performer) {
       vaccinator = performer[0]?.actor?.display || ''
     }
-
     if (isVaccineShotDone && isValidVaccinationCode) {
       vaccinationData.push({
         index: ( index + 1),
@@ -56,6 +55,7 @@ const parse: ParserFunction  = async (jwsPayload: JWSPayload): Promise< RecordEn
       })
     }
   }
+  console.info("#YF--- vaccine data:" + JSON.stringify( vaccinationData ))
   sortRecordByDateField('vaccinationDate', vaccinationData)
   return vaccinationData
 }

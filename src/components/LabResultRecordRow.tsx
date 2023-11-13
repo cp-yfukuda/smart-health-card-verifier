@@ -77,6 +77,7 @@ interface ResultParam {
   issuedDate: number | null;
 } 
 export default ( { recordEntries, issuedDate }: ResultParam ) => {
+
   const { t } = useTranslation()
   const dimension  = useWindowDimensions()
   const { timeZone } = useLocaleContext()
