@@ -1,0 +1,138 @@
+{
+  "name": "shl-viewer-plugin",
+  "version": "0.0.1",
+  "description": "SHL Plugin for Verifier",
+  "main": "lib/commonjs/index",
+  "module": "lib/module/index",
+  "react-native": "src/index",
+  "source": "src/index",
+  "types": "lib/typescript/index.d.ts",
+  "files": [
+    "src",
+    "lib",
+    "android",
+    "ios",
+    "cpp",
+    "!lib/typescript/__tests__",
+    "!android/build",
+    "!ios/build",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
+  "scripts": {
+    "test": "jest --config ./jest.config.js",
+    "prepare-build": "bob build",
+    "typescript": "tsc --noEmit",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lintfile": "eslint",
+    "lintfile:fix": "eslint --fix",
+    "lint:fix": "eslint . --fix --ext .js,.jsx,.ts,.tsx",
+    "release": "release-it"
+  },
+  "author": "Yuri Fukuda",
+  "license": "MIT",
+  "dependencies": {
+    "ajv": "^8.7.1",
+    "lodash": "^4.17.21",
+    "node-jose": "^2.1.1",
+    "pako": "^2.0.4",
+    "jws-utils": "file:../jws-utils"
+  },
+  "devDependencies": {
+    "@react-native-community/eslint-config": "^2.0.0",
+    "@release-it/conventional-changelog": "^5.1.1",
+    "@types/jest": "^26.0.0",
+    "@types/react": "^18.0.24",
+    "@types/react-native": "^0.70.6",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "commitlint": "^11.0.0",
+    "eslint": "^8.21.0",
+    "eslint-config-prettier": "^7.0.0",
+    "eslint-config-standard-with-typescript": "^22.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "i": "^0.3.7",
+    "jest": "^26.0.1",
+    "npm": "^8.18.0",
+    "prettier": "^2.0.5",
+    "react": "^18.1.0",
+    "react-native": "^0.70.4",
+    "react-native-builder-bob": "^0.18.3",
+    "release-it": "^15.5.0",
+    "typescript": "^4.7.4",
+    "parser-sdk": "file:../parser-sdk",
+    "jws-utils": "file:../jws-utils"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "parser-sdk": "file:../parser-sdk",
+    "jws-utils": "file:../jws-utils"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore: release ${version}",
+      "tagName": "v${version}"
+    },
+    "npm": {
+      "publish": true
+    },
+    "github": {
+      "release": true
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "angular"
+      }
+    }
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "prettier"
+    ],
+    "rules": {
+      "prettier/prettier": [
+        "error",
+        {
+          "quoteProps": "consistent",
+          "singleQuote": true,
+          "tabWidth": 2,
+          "trailingComma": "es5",
+          "useTabs": false
+        }
+      ]
+    }
+  },
+  "eslintIgnore": [
+    "node_modules/"
+  ],
+  "prettier": {
+    "quoteProps": "consistent",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "useTabs": false
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  }
+}
