@@ -53,6 +53,5 @@ const validate = async entries => {
   });
   return Promise.resolve(labResults.length > 0);
 };
-console.info('labResultsValidators/labresultValidator' + typeof validate);
 export default validate;
 //# sourceMappingURL=labResultValidator.js.map

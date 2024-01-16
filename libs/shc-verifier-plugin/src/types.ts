@@ -56,16 +56,16 @@ export interface getVaccineCodesHashFunction{
 
 
 
-export interface SHCverifierOption {
+export interface SHCVerifierOption {
   useLegacy: useLegacyFunction,
   getIssuer: AnyIssuerValidateFunction, 
   getAcceptedVaccineCodes: AnyGetAcceptedVaccineCodesFunction,
   isAcceptedLabResult: isAcceptedLabResult,
   getAcceptedSystemCode: getAcceptedSystemCodeFunction
   getSystemCodeLabel: getSystemCodeLabelFunction,
-  getVaccineCodesHash: getVaccineCodesHashFunction, 
+  getVaccineCodesHash: getVaccineCodesHashFunction,  
 }
 
 export interface SHCVerifierType extends VerifierInitOption {
-  shc?:SHCverifierOption
+  shc?:SHCVerifierOption
 }

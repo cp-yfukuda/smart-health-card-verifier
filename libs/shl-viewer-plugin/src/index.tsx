@@ -1,18 +1,30 @@
-import type { IParserBase, BaseResponse } from 'parser-sdk'
-import { getJWS } from 'jws-utils'
+import React from 'react'
+import type { FHIRBundleType, IParserBase, BaseResponse, SetCustomViewType, 
+    TranlateFunctionType, ParserInitOption } from 'parser-sdk'
 import SHLLoader from './shlLoader';
 export  * from './types'
+import { SHLError, ErrorCode }  from './errors'
+import PasscodeRequestView from './views/PasscodeRequestView'
 
+// type Manifest = {
+//   url: string 
+//   key: string
+//   exp?: string
+//   flag?: string
+//   v?: string
+// }
 
-
-
+export let getText: TranlateFunctionType
 export class SHLViewer implements IParserBase {
   shlLoader: SHLLoader
-  constructor () {
+
+  constructor ( option: ParserInitOption ) {
     this.shlLoader = new SHLLoader();
+    getText = option.getTranslationFunction();
   }
   
   canSupport( payloads: string[] ): Promise< IParserBase|null > {
+    console.info("#YF ----- SHL--------")
     if ( payloads.length > 0 &&
          payloads[0].indexOf(this.shlLoader.protocol) >= 0 ) {
        return Promise.resolve( this )
@@ -20,19 +32,66 @@ export class SHLViewer implements IParserBase {
     return Promise.reject(null)
   }
 
-  async validate(payloads: string[]): Promise< null | BaseResponse > {
-    try {
-      let shlURL = this.shlLoader.getIPSURL(payloads[0])
-      if( shlURL ) {
-        let jws = await getJWS( this.shlLoader.protocol, [shlURL] )
-        Promise.resolve({jws});
+
+  async requestPassCode( setCustomViews: SetCustomViewType ): Promise<string|null> {
+    console.info("Requesting passcode")
+    return new Promise(( resolve, reject ) => {
+      const onEntered = ( ( number: string | null ) => {
+        setCustomViews([])
+        resolve(number)
+      })
+      const onCancel = ()=> {
+        setCustomViews([])
+        reject(null)
       }
-    } catch ( e ) {
-      console.info( e )
+      const view = <PasscodeRequestView key={1} 
+      onEntered={onEntered}
+      onCancel={onCancel} />
+      setCustomViews([view]);
+    })
+  }
+
+
+  async validate(payloads: string[], setCustomViews: SetCustomViewType ): Promise< null | BaseResponse > {
+    console.info("#YF ------------Validating.... ")
+    let bundle: FHIRBundleType[] | null  = null
+    try {
+      bundle = await this.shlLoader.validateSHL(payloads[0], null)
+    } catch ( error ) {
+      console.info(`error 1 ${error}`)
+      if( error instanceof SHLError  ) {
+        console.info(`error ${error}`)
+        if ( error.isError( ErrorCode.SHL_PASSCODE_NEEDED) ) {
+          /* #TODO Make it repeatable */
+          const passCode = await this.requestPassCode( setCustomViews )
+          if( passCode ) {
+            bundle = await this.shlLoader.validateSHL(payloads[0], passCode )
+          } 
+
+        }
+      }
+      
     }
-    // let ipsContent  = await this.shlLoader.loadSHLContent(payloads);
-    // return await getRecord( ipsContent );
-    return Promise.reject(null)
+    /* #TODO find out where to get this */
+    const fillerData = {
+      isValid: true,
+      errorCode: 0,
+      issuedDate: new Date().getTime(),
+      issuerData: {
+        iss:"NA",
+        logo_uri: "NA",
+        name: "NA",
+        updated_at: new Date().getTime(),
+        url: "NA"
+      },
+      recordType: "IPS",
+      patientData: {
+        dateOfBirth: "00/00/00",
+        names: ["test"]
+      }
+
+    }
+    return Promise.resolve( bundle ? { ...fillerData, bundle } : null )
   }
 
 }

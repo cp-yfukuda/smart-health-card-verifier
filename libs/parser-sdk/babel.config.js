@@ -7,7 +7,7 @@ module.exports = {
       "module-resolver",
       {
         root: ["./"],
-        extensions: ['.tsx', '.ts', '.js', '.json'],
+        extensions: ['.tsx', '.d.ts','.ts', '.js', '.json'],
         alias: {
           "test": "./__test__",
           "~": "./src",

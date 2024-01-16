@@ -1,4 +1,4 @@
-import type { SHCverifierOption } from '../types';
+import type { SHCVerifierOption } from '../types';
 export declare const VerifierKey = "SHC";
-export declare function setVerifierInitOption(option: SHCverifierOption): void;
-export declare function getVerifierInitOption(): SHCverifierOption;
+export declare function setVerifierInitOption(option: SHCVerifierOption): void;
+export declare function getVerifierInitOption(): SHCVerifierOption;

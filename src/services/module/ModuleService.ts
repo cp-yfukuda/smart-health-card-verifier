@@ -1,4 +1,4 @@
-import { ParserFactory, IParserBase, VerifierInitOption } from 'parser-sdk'
+import { ParserInitOption, ParserFactory, IParserBase } from 'parser-sdk'
 import { SHCVerifier } from 'shc-verifier-plugin'
 import { SHLViewer } from 'shl-viewer-plugin'
 
@@ -13,7 +13,7 @@ export class ModuleService {
     return moduleService;
   }
 
-  initialize( option: VerifierInitOption ): Promise<boolean> {
+  initialize( option: ParserInitOption ): Promise<boolean> {
     ParserFactory.register( "shc", SHCVerifier, option );
     ParserFactory.register( "shl", SHLViewer, option );
     return Promise.resolve( true )

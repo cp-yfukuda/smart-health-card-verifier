@@ -1,6 +1,6 @@
 import { before } from 'lodash'
 import { setVerifierInitOption } from '~/models/Config'
-import type { SHCverifierOption } from '~/types'
+import type { SHCVerifierOption } from '~/types'
 
 const labResultSystem = {
     "code": "50548-7",
@@ -19,7 +19,7 @@ const acceptableSystem = [
 
 function initializeConfig(){
   console.info("Setting up intial SHC Config ")
-  const shcOption: SHCverifierOption = {
+  const shcOption: SHCVerifierOption = {
       useLegacy: ()=>false,
       getIssuer: ()=>[], 
       getVaccineCodesHash: ()=>{ return {} },

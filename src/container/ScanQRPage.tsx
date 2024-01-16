@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, ReactElement } from 'react'
 import { check, PERMISSIONS, RESULTS, request } from 'react-native-permissions'
 import { Platform, View, StyleSheet, Animated, Easing, Alert, useWindowDimensions, PixelRatio } from 'react-native'
 import { useNetInfo } from '@react-native-community/netinfo'
@@ -32,6 +32,7 @@ interface markerPosition {
 
 const ScanQRPage = ({ navigation }: Props) => {
   const { t } = useTranslation()
+  const [ customViews, setCustomViewsIntenal ] = useState<ReactElement[]>([]);
   const { height, width }   = useWindowDimensions()
   const [ hasConnection, setHasConnection ] = useState<boolean>( true )
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean>(false)
@@ -54,6 +55,11 @@ const ScanQRPage = ({ navigation }: Props) => {
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],
   })
+
+
+  const setCustomViews = ( views: ReactElement[] )=> {
+    setCustomViewsIntenal( views )
+  }
 
   const updateConnection = ()=>{
     console.log( `isInternetReachable: ${isInternetReachable}` )
@@ -82,7 +88,9 @@ const ScanQRPage = ({ navigation }: Props) => {
       'height': Math.ceil(tmpMarkerLayerHeight) }
     setMarkerShift( shiftPosition )
   }
-
+  useEffect(()=> {
+    console.info(`customView changed ${customViews.length}`)
+  }, [customViews])
   useEffect(() => {
     updateConnection()
   }, [ isInternetReachable ] )
@@ -164,11 +172,13 @@ const ScanQRPage = ({ navigation }: Props) => {
       recordEntries: [],
     }
 
+
+
     try {
       setScanned(true)
       const parser = await ModuleService.getModuleService().getParser([data])
       if( parser ) {
-        validationResult = await parser.validate([data])
+        validationResult = await parser.validate([data], setCustomViews.bind(this) )
         if ( validationResult  && validationResult.isValid === true ) {
           navigation.navigate({ name: 'ScannedResult', params: { validationResult } })
           return
@@ -262,6 +272,9 @@ const ScanQRPage = ({ navigation }: Props) => {
           </View>
 
         ) }
+        {customViews.length > 0 && <View style={ styles.customViewContainer } >
+          { customViews.map((view) => view) }
+          </View> }
       </View>
     </View>
   )
@@ -277,6 +290,15 @@ const styles = StyleSheet.create({
     left:0,
     width: '100%',
     height: '100%'
+  },
+  customViewContainer:{
+    position: 'absolute',
+    top: 0,
+    left:0,
+    backgroundColor: '#FF0000',
+    width: '100%',
+    height: '100%',
+    zIndex: 1
   },
   qrScannerContainer: {
     flex:1,

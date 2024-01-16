@@ -1,5 +1,5 @@
-import type { VerifierInitOption, VaccineCodeItemType } from 'parser-sdk';
-type ValidateIssuerReturnType = any | null;
+import type { ParserInitOption, VaccineCodeItemType, TranlateFunctionType } from 'parser-sdk';
+declare type ValidateIssuerReturnType = any | null;
 export interface ValidateIssuerFunction<T = unknown> {
     (verifierKey: string, issuer: T): ValidateIssuerReturnType;
 }
@@ -8,7 +8,7 @@ export interface AsyncIssuerValidateFunction<T = unknown> extends ValidateIssuer
     $async: true;
 }
 export declare type AnyIssuerValidateFunction<T = any> = ValidateIssuerFunction<T> | AsyncIssuerValidateFunction<T>;
-type CodesReturnType = string[];
+declare type CodesReturnType = string[];
 export interface GetGetAcceptedVaccineCodesFunction {
     (verifierKey: string): CodesReturnType;
 }
@@ -37,16 +37,16 @@ export interface getVaccineCodesHashFunction {
         [key: string]: VaccineCodeItemType;
     };
 }
-export interface SHCverifierOption {
-    useLegacy: useLegacyFunction;
-    getIssuer: AnyIssuerValidateFunction;
-    getAcceptedVaccineCodes: AnyGetAcceptedVaccineCodesFunction;
-    isAcceptedLabResult: isAcceptedLabResult;
-    getAcceptedSystemCode: getAcceptedSystemCodeFunction;
-    getSystemCodeLabel: getSystemCodeLabelFunction;
-    getVaccineCodesHash: getVaccineCodesHashFunction;
+export interface getTranslationFunction {
+    (): TranlateFunctionType;
 }
-export interface SHCVerifierType extends VerifierInitOption {
-    shc?: SHCverifierOption;
-}
+export declare type SHLViewerOption = ParserInitOption;
+export declare type ManifestItemType = {
+    contentType: string;
+    location?: string;
+    embedded?: string;
+};
+export declare type ManifestType = {
+    files: ManifestItemType[];
+};
 export {};

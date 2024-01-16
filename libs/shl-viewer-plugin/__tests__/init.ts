@@ -1,11 +1,11 @@
 import { before } from 'lodash'
 import { setVerifierInitOption } from '~/models/Config'
-import type { SHCverifierOption } from '~/types'
+import type { SHCVerifierOption } from '~/types'
 
 
 function initializeConfig(){
   console.info("Setting up intial SHL Config ")
-  const shcOption: SHCverifierOption = {
+  const shcOption: SHCVerifierOption = {
       useLegacy: ()=>false,
       getIssuer: ()=>[], 
       getVaccineCodesHash: ()=>{ return {} },

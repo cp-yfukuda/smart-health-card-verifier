@@ -1,6 +1,6 @@
 import type { IParserBase, BaseResponse } from 'parser-sdk'
 import { validate  as qrValidate } from './qr' 
-import type { SHCverifierOption, SHCVerifierType } from './types'
+import type { SHCVerifierOption, SHCVerifierType } from './types'
 import { setVerifierInitOption } from "./models/Config"
 export  * from './types'
 
@@ -10,7 +10,7 @@ export  * from './types'
 export class SHCVerifier implements IParserBase {
 
   constructor ( options: SHCVerifierType ) {
-    setVerifierInitOption( options.shc as SHCverifierOption )
+    setVerifierInitOption( options.shc as SHCVerifierOption )
     console.info("SHCVerifier: initialized")
   }
   
@@ -23,7 +23,7 @@ export class SHCVerifier implements IParserBase {
     return Promise.reject(null)
   }
 
-  async validate(payloads: string[]): Promise< null | BaseResponse > {
+  async validate(payloads: string[] ): Promise< null | BaseResponse > {
     return await qrValidate( payloads );
   }
 }

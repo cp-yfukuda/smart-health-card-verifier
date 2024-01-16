@@ -58,6 +58,7 @@ const parse = async jwsPayload => {
       });
     }
   }
+  console.info("#YF--- vaccine data:" + JSON.stringify(vaccinationData));
   sortRecordByDateField('vaccinationDate', vaccinationData);
   return vaccinationData;
 };

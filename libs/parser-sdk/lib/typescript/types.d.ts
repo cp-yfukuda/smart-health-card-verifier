@@ -1,7 +1,18 @@
+import type { ReactElement } from 'react';
+import type { FHIRBundleType } from './fhirTypes';
+export type OriginalParserInitOption = {
+    [key: string]: any | undefined;
+};
+export interface TranlateFunctionType {
+    (key: string, defaultText: string, option: any | null): string;
+}
+export type ParserInitOption = {
+    getTranslationFunction: () => TranlateFunctionType;
+} & OriginalParserInitOption;
 export type VerifierInitOption = {
     [key: string]: any | undefined;
 };
-export type IParserBaseCls = new (options: VerifierInitOption) => IParserBase;
+export type IParserBaseCls = new (options: ParserInitOption) => IParserBase;
 export interface VaccineCodeItemType {
     'system': string;
     'code': string;
@@ -16,14 +27,16 @@ export interface BaseResources {
     recordType: string;
     recordEntries?: RecordEntry[];
     tagKeys?: string[];
+    bundle?: FHIRBundleType[];
 }
 export interface BaseResponse extends BaseResources {
     isValid: boolean;
     errorCode: number;
 }
+export type SetCustomViewType = (element: ReactElement[]) => void;
 export interface IParserBase {
     canSupport: (payloads: string[]) => Promise<null | IParserBase>;
-    validate: (payloads: string[]) => Promise<null | BaseResponse>;
+    validate: (payloads: string[], setCustomViews: SetCustomViewType) => Promise<null | BaseResponse>;
 }
 export interface Result {
     result: boolean;

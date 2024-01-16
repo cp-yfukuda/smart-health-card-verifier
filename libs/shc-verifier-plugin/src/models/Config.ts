@@ -1,4 +1,4 @@
-import type { SHCverifierOption } from '../types'
+import type { SHCVerifierOption } from '../types'
 
 export const VerifierKey = "SHC"
 const defaultOption = {
@@ -12,14 +12,14 @@ const defaultOption = {
     getVaccineCodesHash: ()=> { return {}} 
 }
 
-var _verifierInitOption: SHCverifierOption  = {
+var _verifierInitOption: SHCVerifierOption  = {
     ...defaultOption
 }
 
-export function setVerifierInitOption( option: SHCverifierOption ): void {
+export function setVerifierInitOption( option: SHCVerifierOption ): void {
     _verifierInitOption = option
 }
 
-export function getVerifierInitOption(): SHCverifierOption {
+export function getVerifierInitOption(): SHCVerifierOption {
     return _verifierInitOption
 }

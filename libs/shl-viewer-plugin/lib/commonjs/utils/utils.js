@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.fetchWithTimeout = fetchWithTimeout;
 exports.sortRecordByDateField = exports.formatDateOfBirth = void 0;
 // NOTE: Timezone affects date presentation, so in US it will be 1 day behind,
 //       that is why `new Date()` is not needed.
@@ -21,4 +22,20 @@ const sortRecordByDateField = (dateFieldName, records) => {
   }
 };
 exports.sortRecordByDateField = sortRecordByDateField;
+async function fetchWithTimeout(url) {
+  let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  let timeout = arguments.length > 2 ? arguments[2] : undefined;
+  let timeoutError = arguments.length > 3 ? arguments[3] : undefined;
+  const controller = new AbortController();
+  const timerPromise = new Promise((_, reject) => {
+    setTimeout(() => {
+      controller.abort();
+      reject(timeoutError);
+    }, timeout);
+  });
+  return await Promise.race([fetch(url, {
+    ...options,
+    signal: controller.signal
+  }), timerPromise]);
+}
 //# sourceMappingURL=utils.js.map

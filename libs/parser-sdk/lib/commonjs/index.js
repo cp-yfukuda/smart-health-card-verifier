@@ -58,6 +58,18 @@ Object.keys(_types).forEach(function (key) {
     }
   });
 });
+var _fhirTypes = require("./fhirTypes");
+Object.keys(_fhirTypes).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _fhirTypes[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _fhirTypes[key];
+    }
+  });
+});
 var _Utils = _interopRequireWildcard(require("./utils/utils"));
 exports.Utils = _Utils;
 var _timer = require("./utils/timer");

@@ -1,5 +1,4 @@
-import type { VerifierInitOption, VaccineCodeItemType } from 'parser-sdk'
-
+import type { ParserInitOption, VaccineCodeItemType, TranlateFunctionType } from 'parser-sdk'
 
 
 type ValidateIssuerReturnType = any | null;
@@ -55,17 +54,18 @@ export interface getVaccineCodesHashFunction{
 }
 
 
+export interface getTranslationFunction{
+  (): TranlateFunctionType
+} 
 
-export interface SHCverifierOption {
-  useLegacy: useLegacyFunction,
-  getIssuer: AnyIssuerValidateFunction, 
-  getAcceptedVaccineCodes: AnyGetAcceptedVaccineCodesFunction,
-  isAcceptedLabResult: isAcceptedLabResult,
-  getAcceptedSystemCode: getAcceptedSystemCodeFunction
-  getSystemCodeLabel: getSystemCodeLabelFunction,
-  getVaccineCodesHash: getVaccineCodesHashFunction, 
+export type SHLViewerOption = ParserInitOption;
+
+export type ManifestItemType = {
+    contentType: string
+    location?: string
+    embedded?: string
 }
 
-export interface SHCVerifierType extends VerifierInitOption {
-  shc?:SHCverifierOption
+export type ManifestType = {
+    files: ManifestItemType[]
 }

@@ -37,7 +37,7 @@ export interface getVaccineCodesHashFunction {
         [key: string]: VaccineCodeItemType;
     };
 }
-export interface SHCverifierOption {
+export interface SHCVerifierOption {
     useLegacy: useLegacyFunction;
     getIssuer: AnyIssuerValidateFunction;
     getAcceptedVaccineCodes: AnyGetAcceptedVaccineCodesFunction;
@@ -47,6 +47,6 @@ export interface SHCverifierOption {
     getVaccineCodesHash: getVaccineCodesHashFunction;
 }
 export interface SHCVerifierType extends VerifierInitOption {
-    shc?: SHCverifierOption;
+    shc?: SHCVerifierOption;
 }
 export {};

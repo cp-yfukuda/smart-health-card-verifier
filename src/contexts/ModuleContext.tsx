@@ -3,7 +3,8 @@ import React, { useContext, useState, useRef, useEffect, Suspense } from 'react'
 import { ModuleService } from '~/services/module/ModuleService' 
 import remoteConfig from '~/models/RemoteConfig'
 import LoadingSpinner from '~/components/LoadingSpinner'
-import type { SHCverifierOption, SHCVerifierType } from 'shc-verifier-plugin'
+import type { SHCVerifierOption, SHCVerifierType } from 'shc-verifier-plugin'
+import type { ParserInitOption } from 'parser-sdk'
 import { getIssuerData } from "~/helpers/getIssuerData"
 import { getAcceptedVaccineCodes, 
         getSystemCodeLabel, 
@@ -11,6 +12,7 @@ import { getAcceptedVaccineCodes,
         isAcceptedLabResult,
         getVaccineCodesHash,
        } from '~/helpers/getFHIRCodes'
+import { useTranslation } from '../services/i18n/i18nUtils'
 
 
 interface ModuleDataType{
@@ -40,8 +42,8 @@ export function getProvider () {
   const Provider = ({ children }: Props): JSX.Element =>  {
     const [ state, setState ] = useState( defaultState )
     const moduleService = ModuleService.getModuleService()
-
-    const shcOption  = {
+    const { t } = useTranslation();
+    const parserOption  = {
       useLegacy: remoteConfig.useLegacy,
       getIssuer: async (verifierKey: string, issuer: string)=> {
         return getIssuerData( verifierKey, issuer)
@@ -50,12 +52,13 @@ export function getProvider () {
       getAcceptedSystemCode: getAcceptedSystemCode, 
       isAcceptedLabResult: isAcceptedLabResult,
       getSystemCodeLabel: getSystemCodeLabel,
-      getVaccineCodesHash: getVaccineCodesHash
-    } as SHCverifierOption
+      getVaccineCodesHash: getVaccineCodesHash,
+    } as ParserInitOption
 
     const option: SHCVerifierType = {
-      shc: shcOption
-          }
+      shc: parserOption,
+      getTranslationFunction: ()=> t
+    }
 
 
     useEffect( ()=>{

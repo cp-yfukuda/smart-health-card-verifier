@@ -13,4 +13,20 @@ export const sortRecordByDateField = (dateFieldName, records) => {
     rec.index = index + 1;
   }
 };
+export async function fetchWithTimeout(url) {
+  let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  let timeout = arguments.length > 2 ? arguments[2] : undefined;
+  let timeoutError = arguments.length > 3 ? arguments[3] : undefined;
+  const controller = new AbortController();
+  const timerPromise = new Promise((_, reject) => {
+    setTimeout(() => {
+      controller.abort();
+      reject(timeoutError);
+    }, timeout);
+  });
+  return await Promise.race([fetch(url, {
+    ...options,
+    signal: controller.signal
+  }), timerPromise]);
+}
 //# sourceMappingURL=utils.js.map
