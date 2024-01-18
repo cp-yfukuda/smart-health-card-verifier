@@ -37,7 +37,7 @@ export interface BaseResponse extends BaseResources {
   isValid: boolean 
   errorCode: number
 }
-export type SetCustomViewType = ( element: ReactElement[] )=> void
+export type SetCustomViewType = ( elements: ReactElement[] )=> void
 
 
 export interface  IParserBase {

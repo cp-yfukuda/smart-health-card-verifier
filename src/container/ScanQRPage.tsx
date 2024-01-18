@@ -32,7 +32,8 @@ interface markerPosition {
 
 const ScanQRPage = ({ navigation }: Props) => {
   const { t } = useTranslation()
-  const [ customViews, setCustomViewsIntenal ] = useState<ReactElement[]>([]);
+  const [ customViews, setCustomViewsIntenal ] = useState<any[]>([]);
+  const [ qrData, setQRData ] = useState<string|null>(null);
   const { height, width }   = useWindowDimensions()
   const [ hasConnection, setHasConnection ] = useState<boolean>( true )
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean>(false)
@@ -58,7 +59,7 @@ const ScanQRPage = ({ navigation }: Props) => {
 
 
   const setCustomViews = ( views: ReactElement[] )=> {
-    setCustomViewsIntenal( views )
+    setCustomViewsIntenal( views );
   }
 
   const updateConnection = ()=>{
@@ -94,7 +95,8 @@ const ScanQRPage = ({ navigation }: Props) => {
   useEffect(() => {
     updateConnection()
   }, [ isInternetReachable ] )
- 
+
+
   useEffect(() => {
 
     configureMarkerSizes(width, height);
@@ -133,6 +135,12 @@ const ScanQRPage = ({ navigation }: Props) => {
     })()
   }, [])
 
+  useEffect( () => {
+    if( qrData ) {
+      validateData( qrData )
+    }
+  }, [qrData])
+
   navigation.addListener('focus', () => {
     setScanned(false)
   })
@@ -153,7 +161,12 @@ const ScanQRPage = ({ navigation }: Props) => {
   }
 
   const handleBarCodeScanned = async ({ data }: { data: string }) => {
-    let validationResult: BaseResponse = {
+    setScanned(true)
+    setQRData(data)
+  }
+
+  const validateData = async ( data: string ) => {
+   let validationResult: BaseResponse = {
       isValid: false,
       recordType: RecordType.unknown,
       errorCode:0,
@@ -175,7 +188,6 @@ const ScanQRPage = ({ navigation }: Props) => {
 
 
     try {
-      setScanned(true)
       const parser = await ModuleService.getModuleService().getParser([data])
       if( parser ) {
         validationResult = await parser.validate([data], setCustomViews.bind(this) )
@@ -273,7 +285,7 @@ const ScanQRPage = ({ navigation }: Props) => {
 
         ) }
         {customViews.length > 0 && <View style={ styles.customViewContainer } >
-          { customViews.map((view) => view) }
+          { customViews }
           </View> }
       </View>
     </View>

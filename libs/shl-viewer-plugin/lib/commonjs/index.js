@@ -25,7 +25,9 @@ Object.keys(_types).forEach(function (key) {
 var _errors = require("./errors");
 var _PasscodeRequestView = _interopRequireDefault(require("./views/PasscodeRequestView"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return typeof key === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (typeof input !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (typeof res !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
 // type Manifest = {
 //   url: string 
 //   key: string
@@ -43,14 +45,12 @@ class SHLViewer {
     exports.getText = getText = option.getTranslationFunction();
   }
   canSupport(payloads) {
-    console.info("#YF ----- SHL--------");
     if (payloads.length > 0 && payloads[0].indexOf(this.shlLoader.protocol) >= 0) {
       return Promise.resolve(this);
     }
     return Promise.reject(null);
   }
   async requestPassCode(setCustomViews) {
-    console.info("Requesting passcode");
     return new Promise((resolve, reject) => {
       const onEntered = number => {
         setCustomViews([]);
@@ -65,11 +65,11 @@ class SHLViewer {
         onEntered: onEntered,
         onCancel: onCancel
       });
+      console.info("#YF Requesting with" + JSON.stringify([view]));
       setCustomViews([view]);
     });
   }
   async validate(payloads, setCustomViews) {
-    console.info("#YF ------------Validating.... ");
     let bundle = null;
     try {
       bundle = await this.shlLoader.validateSHL(payloads[0], null);

@@ -8,10 +8,7 @@
   "source": "src/index",
   "files": [
     "src",
-    "dist/**/*.js",
-    "dist/excel.browser.js",
-    "dist/**/*.d.ts",
-    "dist/**/*.js.map"
+    "lib"
   ],
   "exports": {
     ".": {
@@ -20,23 +17,19 @@
       "require": "./lib/commonjs/index.js"
     }
   },
+  "dependencies": {
+    "node-jose": "^2.1.1"
+  },
   "devDependencies": {
-    "@babel/preset-env": "^7.18.10",
-    "babel-plugin-module-resolver": "^4.1.0"
+    "@types/node": "^20.9.0",
+    "@types/node-jose": "^1.1.13",
+    "typescript": "^5.2.2"
   },
   "types": "lib/index.d.ts",
-  "files": [
-    "src",
-    "lib"
-  ],
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Yuri Fukuda",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^20.9.0",
-    "typescript": "^5.2.2"
-  }
+  "license": "MIT"
 }

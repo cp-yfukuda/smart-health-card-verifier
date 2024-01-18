@@ -104,6 +104,7 @@ function decodeToJws(protocol, jws, chunkCount = 1) {
         const expectedBody = chunked
             ? `${qrHeader}${positiveIntRegExp}/${positiveIntRegExp}/[0-9]+`
             : `${qrHeader}[0-9]+`;
+        console.log(`data = ${jws}`);
         console.log(`Invalid numeric QR: expected ${expectedBody}`, ErrorCode.INVALID_NUMERIC_QR);
         return undefined;
     }

@@ -1,6 +1,6 @@
 import type { FHIRBundleType } from 'parser-sdk';
 import type { ManifestType } from './types';
-declare type SHLData = {
+type SHLData = {
     url: string;
     key: string;
     exp: number | null;
@@ -8,7 +8,7 @@ declare type SHLData = {
     v: number | null;
     flag: string | null;
 };
-declare type SHLParserResult = {
+type SHLParserResult = {
     original: string;
     shl: string;
     payload: string;

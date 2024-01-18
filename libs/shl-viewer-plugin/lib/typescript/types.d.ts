@@ -1,5 +1,5 @@
 import type { ParserInitOption, VaccineCodeItemType, TranlateFunctionType } from 'parser-sdk';
-declare type ValidateIssuerReturnType = any | null;
+type ValidateIssuerReturnType = any | null;
 export interface ValidateIssuerFunction<T = unknown> {
     (verifierKey: string, issuer: T): ValidateIssuerReturnType;
 }
@@ -8,7 +8,7 @@ export interface AsyncIssuerValidateFunction<T = unknown> extends ValidateIssuer
     $async: true;
 }
 export declare type AnyIssuerValidateFunction<T = any> = ValidateIssuerFunction<T> | AsyncIssuerValidateFunction<T>;
-declare type CodesReturnType = string[];
+type CodesReturnType = string[];
 export interface GetGetAcceptedVaccineCodesFunction {
     (verifierKey: string): CodesReturnType;
 }
@@ -40,13 +40,13 @@ export interface getVaccineCodesHashFunction {
 export interface getTranslationFunction {
     (): TranlateFunctionType;
 }
-export declare type SHLViewerOption = ParserInitOption;
-export declare type ManifestItemType = {
+export type SHLViewerOption = ParserInitOption;
+export type ManifestItemType = {
     contentType: string;
     location?: string;
     embedded?: string;
 };
-export declare type ManifestType = {
+export type ManifestType = {
     files: ManifestItemType[];
 };
 export {};

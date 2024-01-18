@@ -5,7 +5,6 @@ import SHLLoader from './shlLoader';
 export  * from './types'
 import { SHLError, ErrorCode }  from './errors'
 import PasscodeRequestView from './views/PasscodeRequestView'
-
 // type Manifest = {
 //   url: string 
 //   key: string
@@ -24,7 +23,6 @@ export class SHLViewer implements IParserBase {
   }
   
   canSupport( payloads: string[] ): Promise< IParserBase|null > {
-    console.info("#YF ----- SHL--------")
     if ( payloads.length > 0 &&
          payloads[0].indexOf(this.shlLoader.protocol) >= 0 ) {
        return Promise.resolve( this )
@@ -34,7 +32,6 @@ export class SHLViewer implements IParserBase {
 
 
   async requestPassCode( setCustomViews: SetCustomViewType ): Promise<string|null> {
-    console.info("Requesting passcode")
     return new Promise(( resolve, reject ) => {
       const onEntered = ( ( number: string | null ) => {
         setCustomViews([])
@@ -47,13 +44,13 @@ export class SHLViewer implements IParserBase {
       const view = <PasscodeRequestView key={1} 
       onEntered={onEntered}
       onCancel={onCancel} />
+      console.info("#YF Requesting with" + JSON.stringify([view]))
       setCustomViews([view]);
     })
   }
 
 
   async validate(payloads: string[], setCustomViews: SetCustomViewType ): Promise< null | BaseResponse > {
-    console.info("#YF ------------Validating.... ")
     let bundle: FHIRBundleType[] | null  = null
     try {
       bundle = await this.shlLoader.validateSHL(payloads[0], null)
